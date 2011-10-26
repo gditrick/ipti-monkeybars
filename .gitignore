@@ -1,0 +1,5 @@
+.bundle
+lib/java/monkeybars*.jar
+lib/java/jruby-complete*.jar
+nbproject
+.idea
