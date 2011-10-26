@@ -1,0 +1,2 @@
+class LightBar
+end
