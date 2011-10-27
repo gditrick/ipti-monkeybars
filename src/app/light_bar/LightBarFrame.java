@@ -8,7 +8,7 @@
  *
  * Created on Oct 19, 2011, 9:11:11 AM
  */
-package app.views.light_bar_views;
+package app.light_bar;
 
 /**
  *

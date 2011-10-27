@@ -1,4 +1,4 @@
-class D4Module
+class D4ModuleModel
   attr_accessor :address, :digits, :ledState, :addState, :subState
 
   def initialize(addr="01")

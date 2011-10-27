@@ -8,9 +8,8 @@
  *
  * Created on Oct 14, 2011, 9:39:33 AM
  */
-package app.views.oc_module_views;
+package app.oc_module;
 
-import app.views.d4_module_views.*;
 
 /**
  *

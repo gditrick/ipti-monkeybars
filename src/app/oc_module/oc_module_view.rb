@@ -1,5 +1,5 @@
 class OcModuleView < ApplicationView
-  set_java_class 'app.views.oc_module_views.OcModulePanel'
+  set_java_class 'app.oc_module.OcModulePanel'
 
   BUTTON_STATES = {:off => false, :on => true}
   map :model => :text,      :view => "displayText.text"

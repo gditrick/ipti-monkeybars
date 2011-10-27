@@ -1,7 +1,7 @@
 require "oc_module_controller"
 
 class LightBarController < ApplicationController
-  set_model 'LightBar'
+  set_model 'LightBarModel'
   set_view 'LightBarView'
   set_close_action :exit
 

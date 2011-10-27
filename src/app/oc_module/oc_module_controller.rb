@@ -1,5 +1,5 @@
 class OcModuleController < ApplicationController
-  set_model 'OcModule'
+  set_model 'OcModuleModel'
   set_view  'OcModuleView'
 
   def led_button_action_performed

@@ -1,5 +1,5 @@
 class D4ModuleView < ApplicationView
-  set_java_class 'app.views.d4_module_views.D4ModulePanel'
+  set_java_class 'app.d4_module.D4ModulePanel'
 
   BUTTON_STATES = {:off => false, :on => true}
   map :model => :digits,    :view => "digitsField.text"

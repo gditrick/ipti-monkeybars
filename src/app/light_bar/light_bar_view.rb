@@ -1,6 +1,6 @@
 require 'pp'
 class LightBarView < ApplicationView
-  set_java_class 'app.views.light_bar_views.LightBarFrame'
+  set_java_class 'app.light_bar.LightBarFrame'
 
   attr_accessor :current_x_pos, :current_y_pos, :current_width, :current_height
 

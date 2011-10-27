@@ -1,4 +1,4 @@
-class OcModule
+class OcModuleModel
   attr_accessor :address, :text, :ledState, :upState, :downState
 
   def initialize(addr="01")

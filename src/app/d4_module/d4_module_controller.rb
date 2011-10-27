@@ -1,5 +1,5 @@
 class D4ModuleController < ApplicationController
-  set_model 'D4Module'
+  set_model 'D4ModuleModel'
   set_view 'D4ModuleView'
 
   def led_button_action_performed
