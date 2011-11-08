@@ -44,7 +44,7 @@ public class OcModulePanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(290, 80));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        upButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
+        upButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
         upButton.setAlignmentY(0.0F);
         upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         upButton.setDoubleBuffered(true);

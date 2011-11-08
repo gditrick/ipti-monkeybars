@@ -8,7 +8,7 @@ class LightBarController < ApplicationController
   def load
     @controllers ||= []
     @controllers << OcModuleController.create_instance
-    @controllers.last.open
     add_nested_controller(:oc, @controllers.last)
+    @controllers.last.open
   end
 end
