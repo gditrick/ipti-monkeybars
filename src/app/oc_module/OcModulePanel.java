@@ -42,9 +42,8 @@ public class OcModulePanel extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(290, 80));
         setMinimumSize(new java.awt.Dimension(290, 80));
         setPreferredSize(new java.awt.Dimension(290, 80));
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        upButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
+        upButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         upButton.setAlignmentY(0.0F);
         upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         upButton.setDoubleBuffered(true);
@@ -53,10 +52,8 @@ public class OcModulePanel extends javax.swing.JPanel {
         upButton.setMaximumSize(new java.awt.Dimension(25, 25));
         upButton.setMinimumSize(new java.awt.Dimension(25, 25));
         upButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        add(upButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
-        upButton.getAccessibleContext().setAccessibleName("");
 
-        downButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
+        downButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         downButton.setText("-");
         downButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         downButton.setDoubleBuffered(true);
@@ -64,8 +61,6 @@ public class OcModulePanel extends javax.swing.JPanel {
         downButton.setMaximumSize(new java.awt.Dimension(25, 25));
         downButton.setMinimumSize(new java.awt.Dimension(25, 25));
         downButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        add(downButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
-        downButton.getAccessibleContext().setAccessibleName("");
 
         displayText.setEditable(false);
         displayText.setFont(new java.awt.Font("DejaVu Sans", 0, 24)); // NOI18N
@@ -74,7 +69,6 @@ public class OcModulePanel extends javax.swing.JPanel {
         displayText.setMaximumSize(new java.awt.Dimension(190, 40));
         displayText.setMinimumSize(new java.awt.Dimension(190, 40));
         displayText.setPreferredSize(new java.awt.Dimension(190, 40));
-        add(displayText, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
 
         ledButton.setDoubleBuffered(true);
         ledButton.setMaximumSize(new java.awt.Dimension(30, 60));
@@ -82,7 +76,38 @@ public class OcModulePanel extends javax.swing.JPanel {
         ledButton.setPreferredSize(new java.awt.Dimension(30, 60));
         ledButton.setRequestFocusEnabled(false);
         ledButton.setRolloverEnabled(false);
-        add(ledButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 10, -1, -1));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(upButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(downButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(5, 5, 5)
+                .addComponent(displayText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addComponent(upButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(downButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(displayText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        upButton.getAccessibleContext().setAccessibleName("");
+        downButton.getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
 
 
