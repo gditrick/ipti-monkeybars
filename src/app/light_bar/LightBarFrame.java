@@ -34,7 +34,6 @@ public class LightBarFrame extends javax.swing.JFrame {
         lights_panel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setEnabled(false);
         setMinimumSize(new java.awt.Dimension(300, 115));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 

@@ -2,9 +2,9 @@ class OcModuleController < ApplicationController
   set_model 'OcModuleModel'
   set_view  'OcModuleView'
 
-  add_listener :type => :action, :components => :led_button
-  add_listener :type => :action, :components => :up_button
-  add_listener :type => :action, :components => :down_button
+  add_listener :type => :action, :components => "led_button"
+  add_listener :type => :action, :components => "up_button"
+  add_listener :type => :action, :components => "down_button"
 
   def led_button_action_performed
     model.text      = ""
