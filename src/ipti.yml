@@ -1,4 +1,6 @@
 ## YAML Template.
 ---
-controller: !ruby/object:LightBarController
-  initial_model: !ruby/object:LightBarModel
+configuration: !ruby/object:IptiConfiguration
+  controller_klass: LightBarController
+  model: !ruby/object:LightBarModel
+    number_of_4digit: 16

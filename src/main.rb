@@ -68,19 +68,20 @@ opts.each do |opt, arg|
 end
 
 controller_klass = 'LightBarController'
-initial_model    = LightBarModel.new
+model            = LightBarModel.new
 
 if File.exists?(configuration_file)
   yml = YAML::load(File.open(configuration_file))
-  controller_klass = yml['controller'] unless yml['controller'].nil?
-  initial_model = yml['model'] unless yml['model'].nil?
+  unless yml['configuration'].nil?
+    configuration    = yml['configuration']
+    controller_klass = configuration.controller_klass
+    model            = configuration.model
+  end
 end unless configuration_file.nil?
 
 begin
-  controller = eval("#{controller}.instance")
-  control    
-  pp controller
-  controller.open
+  controller = eval("#{controller_klass}.instance")
+  controller.open(:model => model)
   # Your application code goes here
 rescue => e
   show_error_dialog_and_exit(e)
