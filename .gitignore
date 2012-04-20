@@ -1,6 +1,5 @@
 .bundle
-lib/java/monkeybars*.jar
-lib/java/jruby-complete*.jar
+*.sw[po]
 nbproject
 .idea
 build

@@ -1,4 +1,5 @@
-require "oc_module_controller"
+require 'oc_module_controller'
+require 'pp'
 
 class LightBarController < ApplicationController
   attr_accessor  :initial_model
@@ -11,13 +12,22 @@ class LightBarController < ApplicationController
     unless args.compact.empty?
       options = Hash[*args.flatten]
       if options.has_key?(:model)
-        
-        update_model(options[:model], :number_of_4digit)
+        model = options[:model]
+        update_model(model)
       end
     end
+    pp model
     @controllers ||= []
-    @controllers << OcModuleController.instance
-    add_nested_controller(:oc, @controllers.last)
-    @controllers.last.open
+    model.devices.each do |device|
+      pp device
+      pp device.address
+      pp device.controller_klass
+      c =  eval("#{device.controller_klass}.instance")
+      pp c
+      @controllers << c
+      pp device.type_sym
+      add_nested_controller(device.type_sym, c)
+    end
+    @controllers.first.open
   end
 end

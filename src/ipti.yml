@@ -3,4 +3,32 @@
 configuration: !ruby/object:IptiConfiguration
   controller_klass: LightBarController
   model: !ruby/object:LightBarModel
+    d4_starting_address: "01"
+    devices:
+#      - !ruby/object:D4ModuleModel
+#        address: "01"
+#        controller_klass: D4ModuleController
+#      - !ruby/object:D4ModuleModel
+#        address: "02"
+#        controller_klass: D4ModuleController
+      - !ruby/object:OcModuleModel &id001
+        address: "01"
+        controller_klass: OcModuleController
+        downState: !ruby/sym off
+        ledState: !ruby/sym off
+        main_oc: true
+        upState: !ruby/sym off
+        type_sym: !ruby/sym oc
+#     - !ruby/object:D4ModuleModel
+#       address: "03"
+#       controller_klass: D4ModuleController
+#     - !ruby/object:D4ModuleModel
+#       address: "04"
+#       controller_klass: D4ModuleController
+#     - !ruby/object:D4ModuleModel
+#       address: "05"
+#       controller_klass: D4ModuleController
+    lp_starting_address: 01
+    main_oc: *id001
     number_of_4digit: 16
+    number_of_light_pick: 0

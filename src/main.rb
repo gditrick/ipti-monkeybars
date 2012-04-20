@@ -52,6 +52,7 @@ require 'light_bar_model'
 require 'ipti_configuration'
 
 Dir.glob(File.dirname(__FILE__) + '/**/*_controller.rb').each{|f| require(f) }
+Dir.glob(File.dirname(__FILE__) + '/**/*_model.rb').each{|f| require(f) }
 
 configuration_file = nil
 opts = GetoptLong.new(
