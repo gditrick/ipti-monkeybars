@@ -44,9 +44,8 @@ public class D4ModulePanel extends javax.swing.JPanel {
         setMinimumSize(new java.awt.Dimension(195, 80));
         setPreferredSize(new java.awt.Dimension(195, 80));
         setRequestFocusEnabled(false);
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        addButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
+        addButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         addButton.setAlignmentY(0.0F);
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -54,10 +53,8 @@ public class D4ModulePanel extends javax.swing.JPanel {
         addButton.setMaximumSize(new java.awt.Dimension(25, 25));
         addButton.setMinimumSize(new java.awt.Dimension(25, 25));
         addButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        add(addButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
-        addButton.getAccessibleContext().setAccessibleName("Add");
 
-        minusButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
+        minusButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         minusButton.setText("-");
         minusButton.setAlignmentY(0.0F);
         minusButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -66,29 +63,64 @@ public class D4ModulePanel extends javax.swing.JPanel {
         minusButton.setMinimumSize(new java.awt.Dimension(25, 25));
         minusButton.setPreferredSize(new java.awt.Dimension(25, 25));
         minusButton.setRequestFocusEnabled(false);
-        add(minusButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
 
-        digitsField.setFont(new java.awt.Font("DejaVu Sans", 0, 23));
+        digitsField.setFont(new java.awt.Font("DejaVu Sans", 0, 23)); // NOI18N
         digitsField.setText("8888");
         digitsField.setAutoscrolls(true);
         digitsField.setMaximumSize(new java.awt.Dimension(70, 40));
         digitsField.setMinimumSize(new java.awt.Dimension(70, 40));
         digitsField.setPreferredSize(new java.awt.Dimension(70, 40));
         digitsField.setRequestFocusEnabled(false);
-        add(digitsField, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
 
         ledButton.setMaximumSize(new java.awt.Dimension(30, 60));
         ledButton.setMinimumSize(new java.awt.Dimension(30, 60));
         ledButton.setPreferredSize(new java.awt.Dimension(30, 60));
-        add(ledButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, -1, -1));
 
         upArrowButton.setEnabled(false);
         upArrowButton.setPreferredSize(new java.awt.Dimension(15, 15));
-        add(upArrowButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 15, -1, -1));
 
         downArrowButton.setEnabled(false);
         downArrowButton.setPreferredSize(new java.awt.Dimension(15, 15));
-        add(downArrowButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, -1, -1));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(minusButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(5, 5, 5)
+                .addComponent(digitsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(upArrowButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(downArrowButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(minusButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(digitsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(upArrowButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(downArrowButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        addButton.getAccessibleContext().setAccessibleName("Add");
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

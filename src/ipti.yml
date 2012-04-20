@@ -1,0 +1,4 @@
+## YAML Template.
+---
+controller: !ruby/object:LightBarController
+  initial_model: !ruby/object:LightBarModel

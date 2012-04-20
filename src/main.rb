@@ -1,8 +1,11 @@
 #===============================================================================
 # Much of the platform specific code should be called before Swing is touched.
 # The useScreenMenuBar is an example of this.
-require 'rbconfig'
 require 'java'
+require 'rbconfig'
+require 'getoptlong'
+require 'yaml'
+require 'pp'
 
 #===============================================================================
 # Platform specific operations, feel free to remove or override any of these
@@ -45,9 +48,39 @@ def show_error_dialog_and_exit(exception, thread=nil)
 end
 GlobalErrorHandler.on_error {|exception, thread| show_error_dialog_and_exit(exception, thread) }
 
+require 'light_bar_model'
+require 'ipti_configuration'
+
+Dir.glob(File.dirname(__FILE__) + '/**/*_controller.rb').each{|f| require(f) }
+
+configuration_file = nil
+opts = GetoptLong.new(
+  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+  [ '--configuration', '-c', GetoptLong::REQUIRED_ARGUMENT ]
+)
+opts.each do |opt, arg|
+  case opt
+    when '--help' then
+      puts ARGV[0] + " [-h|--help] [-c|--configuration <Yaml-config-file>"
+    when '--configuration' then
+      configuration_file = arg 
+  end
+end
+
+controller_klass = 'LightBarController'
+initial_model    = LightBarModel.new
+
+if File.exists?(configuration_file)
+  yml = YAML::load(File.open(configuration_file))
+  controller_klass = yml['controller'] unless yml['controller'].nil?
+  initial_model = yml['model'] unless yml['model'].nil?
+end unless configuration_file.nil?
+
 begin
-  require "light_bar_controller"
-  LightBarController.instance.open
+  controller = eval("#{controller}.instance")
+  control    
+  pp controller
+  controller.open
   # Your application code goes here
 rescue => e
   show_error_dialog_and_exit(e)
