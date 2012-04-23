@@ -32,14 +32,33 @@ class LightBarView < ApplicationView
   end
 
   def add_device(nested_view, nested_component, model, transfer)
-    pp nested_component
+    #pp nested_component
     lights_panel.add  nested_component
-    nested_component.set_location(@current_x_pos, @current_y_pos)
-    if lights_panel.width <= @current_x_pos + nested_view.width
-      lights_panel.width(@current_x_pos + nested_view.width)
+    pp screen_size.width
+    if @current_x_pos + nested_view.width > screen_size.width
+      pp "New Line of Lights"
+      @current_x_pos = 0
+      @current_y_pos +=  nested_view.height + 10
     end
+    nested_component.set_location(@current_x_pos, @current_y_pos)
+    #if lights_panel.width <= @current_x_pos + nested_view.width
+    #  lights_panel.width(@current_x_pos + nested_view.width)
+    #end
     @current_x_pos += nested_view.width
     pp @current_x_pos
-
+    #lights_panel.validate
+    #lights_panel.repaint
+    #lights_pane.validate
+    #lights_pane.repaint
+    #pp @main_view_component.size.width = @current_x_pos
+    #pp @main_view_component.preferred_size.width = @current_x_pos
+    #@main_view_component.size.width = @current_x_pos
+    #@main_view_component.preferred_size.width = @current_x_pos
+    #pp @main_view_component.size.width = @current_x_pos
+    #pp @main_view_component.preferred_size.width = @current_x_pos
+    #@main_view_component.preferred_size.width = @current_x_pos
+    #pp @main_view_component
+    #@main_view_component.validate
+    @main_view_component.pack
   end
 end

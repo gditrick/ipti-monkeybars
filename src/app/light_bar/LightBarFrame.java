@@ -34,20 +34,17 @@ public class LightBarFrame extends javax.swing.JFrame {
         lights_panel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(300, 115));
-        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
-
-        lights_pane.setOpaque(false);
-        lights_pane.setRequestFocusEnabled(false);
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.PAGE_AXIS));
 
         lights_panel.setBackground(new java.awt.Color(0, 0, 0));
         lights_panel.setForeground(new java.awt.Color(255, 255, 255));
         lights_panel.setAutoscrolls(true);
-        lights_panel.setDoubleBuffered(false);
-        lights_panel.setLayout(new javax.swing.BoxLayout(lights_panel, javax.swing.BoxLayout.LINE_AXIS));
+        lights_panel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
         lights_pane.setViewportView(lights_panel);
 
         getContentPane().add(lights_pane);
+
+        getAccessibleContext().setAccessibleParent(this);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
