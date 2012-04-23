@@ -16,18 +16,12 @@ class LightBarController < ApplicationController
         update_model(model)
       end
     end
-    pp model
     @controllers ||= []
     model.devices.each do |device|
-      pp device
-      pp device.address
-      pp device.controller_klass
-      c =  eval("#{device.controller_klass}.instance")
-      pp c
+      c =  eval("#{device.controller_klass}.create_instance")
       @controllers << c
-      pp device.type_sym
       add_nested_controller(device.type_sym, c)
+      c.open(:model => device)
     end
-    @controllers.first.open
   end
 end

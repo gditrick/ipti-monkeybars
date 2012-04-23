@@ -40,6 +40,8 @@ public class LightBarFrame extends javax.swing.JFrame {
         lights_pane.setOpaque(false);
         lights_pane.setRequestFocusEnabled(false);
 
+        lights_panel.setBackground(new java.awt.Color(0, 0, 0));
+        lights_panel.setForeground(new java.awt.Color(255, 255, 255));
         lights_panel.setAutoscrolls(true);
         lights_panel.setDoubleBuffered(false);
         lights_panel.setLayout(new javax.swing.BoxLayout(lights_panel, javax.swing.BoxLayout.LINE_AXIS));

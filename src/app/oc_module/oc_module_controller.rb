@@ -6,6 +6,16 @@ class OcModuleController < ApplicationController
   add_listener :type => :action, :components => "up_button"
   add_listener :type => :action, :components => "down_button"
 
+  def load(*args)
+    unless args.compact.empty?
+      options = Hash[*args.flatten]
+      if options.has_key?(:model)
+        model = options[:model]
+        update_model(model)
+      end
+    end
+  end
+
   def led_button_action_performed
     model.text      = ""
     model.ledState  = :off

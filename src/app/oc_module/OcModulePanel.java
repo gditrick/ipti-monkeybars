@@ -42,6 +42,7 @@ public class OcModulePanel extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(290, 80));
         setMinimumSize(new java.awt.Dimension(290, 80));
         setPreferredSize(new java.awt.Dimension(290, 80));
+        setSize(new java.awt.Dimension(290, 80));
 
         upButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         upButton.setAlignmentY(0.0F);
@@ -63,19 +64,24 @@ public class OcModulePanel extends javax.swing.JPanel {
         downButton.setPreferredSize(new java.awt.Dimension(25, 25));
 
         displayText.setEditable(false);
-        displayText.setFont(new java.awt.Font("DejaVu Sans", 0, 24)); // NOI18N
+        displayText.setFont(new java.awt.Font("DejaVu Sans", 0, 22)); // NOI18N
         displayText.setText("888888888888");
         displayText.setDoubleBuffered(true);
         displayText.setMaximumSize(new java.awt.Dimension(190, 40));
         displayText.setMinimumSize(new java.awt.Dimension(190, 40));
         displayText.setPreferredSize(new java.awt.Dimension(190, 40));
+        displayText.setSize(new java.awt.Dimension(190, 40));
+        displayText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                displayTextActionPerformed(evt);
+            }
+        });
 
         ledButton.setDoubleBuffered(true);
         ledButton.setMaximumSize(new java.awt.Dimension(30, 60));
         ledButton.setMinimumSize(new java.awt.Dimension(30, 60));
         ledButton.setPreferredSize(new java.awt.Dimension(30, 60));
         ledButton.setRequestFocusEnabled(false);
-        ledButton.setRolloverEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -109,6 +115,10 @@ public class OcModulePanel extends javax.swing.JPanel {
         upButton.getAccessibleContext().setAccessibleName("");
         downButton.getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
+
+  private void displayTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayTextActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_displayTextActionPerformed
 
 
 

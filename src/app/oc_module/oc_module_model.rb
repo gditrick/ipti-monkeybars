@@ -2,19 +2,19 @@ class OcModuleModel
   attr_accessor :address,
                 :controller_klass,
                 :text,
-                :ledState,
-                :upState,
-                :downState,
+                :led_state,
+                :up_state,
+                :down_state,
                 :main_oc,
                 :type_sym 
 
   def initialize(addr="01")
     @address          = addr
     @controller_klass = 'OcModuleController'
-    @text             = 'Testing'
-    @ledState         = :off
-    @upState          = :off
-    @downState        = :off
+    @text             = ''
+    @led_state        = :off
+    @up_state         = :off
+    @down_state       = :off
     @type_sym         = :oc
   end
 end

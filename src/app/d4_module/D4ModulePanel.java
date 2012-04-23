@@ -33,7 +33,7 @@ public class D4ModulePanel extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         minusButton = new javax.swing.JButton();
         digitsField = new javax.swing.JTextField();
-        javax.swing.JButton ledButton = new javax.swing.JButton();
+        ledButton = new javax.swing.JButton();
         upArrowButton = new javax.swing.JButton();
         downArrowButton = new javax.swing.JButton();
 
@@ -44,6 +44,7 @@ public class D4ModulePanel extends javax.swing.JPanel {
         setMinimumSize(new java.awt.Dimension(195, 80));
         setPreferredSize(new java.awt.Dimension(195, 80));
         setRequestFocusEnabled(false);
+        setSize(new java.awt.Dimension(195, 80));
 
         addButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         addButton.setAlignmentY(0.0F);
@@ -64,9 +65,9 @@ public class D4ModulePanel extends javax.swing.JPanel {
         minusButton.setPreferredSize(new java.awt.Dimension(25, 25));
         minusButton.setRequestFocusEnabled(false);
 
-        digitsField.setFont(new java.awt.Font("DejaVu Sans", 0, 23)); // NOI18N
+        digitsField.setEditable(false);
+        digitsField.setFont(new java.awt.Font("DejaVu Sans", 0, 20)); // NOI18N
         digitsField.setText("8888");
-        digitsField.setAutoscrolls(true);
         digitsField.setMaximumSize(new java.awt.Dimension(70, 40));
         digitsField.setMinimumSize(new java.awt.Dimension(70, 40));
         digitsField.setPreferredSize(new java.awt.Dimension(70, 40));
@@ -78,6 +79,11 @@ public class D4ModulePanel extends javax.swing.JPanel {
 
         upArrowButton.setEnabled(false);
         upArrowButton.setPreferredSize(new java.awt.Dimension(15, 15));
+        upArrowButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                upArrowButtonActionPerformed(evt);
+            }
+        });
 
         downArrowButton.setEnabled(false);
         downArrowButton.setPreferredSize(new java.awt.Dimension(15, 15));
@@ -92,8 +98,8 @@ public class D4ModulePanel extends javax.swing.JPanel {
                     .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(minusButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
-                .addComponent(digitsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
+                .addComponent(digitsField, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(upArrowButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(downArrowButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -123,10 +129,15 @@ public class D4ModulePanel extends javax.swing.JPanel {
         addButton.getAccessibleContext().setAccessibleName("Add");
     }// </editor-fold>//GEN-END:initComponents
 
+  private void upArrowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upArrowButtonActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_upArrowButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JTextField digitsField;
     private javax.swing.JButton downArrowButton;
+    private javax.swing.JButton ledButton;
     private javax.swing.JButton minusButton;
     private javax.swing.JButton upArrowButton;
     // End of variables declaration//GEN-END:variables
