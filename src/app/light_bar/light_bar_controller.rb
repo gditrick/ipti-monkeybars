@@ -1,9 +1,5 @@
-require 'oc_module_controller'
 require 'pp'
-
 class LightBarController < ApplicationController
-  attr_accessor  :initial_model
-
   set_model 'LightBarModel'
   set_view 'LightBarView'
   set_close_action :exit
@@ -17,11 +13,11 @@ class LightBarController < ApplicationController
       end
     end
     @controllers ||= []
-    model.devices.each do |device|
-      c =  eval("#{device.controller_klass}.create_instance")
+    model.bays.each do |bay|
+      c =  eval("#{bay.controller_klass}.create_instance")
       @controllers << c
-      add_nested_controller(device.type_sym, c)
-      c.open(:model => device)
+      add_nested_controller(bay.type_sym, c)
+      c.open(:model => bay)
     end
   end
 end
