@@ -44,9 +44,7 @@
             <Property name="autoscrolls" type="boolean" value="true"/>
           </Properties>
 
-          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
-            <Property name="alignment" type="int" value="2"/>
-          </Layout>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
         </Container>
       </SubComponents>
     </Container>

@@ -39,7 +39,7 @@ public class LightBarFrame extends javax.swing.JFrame {
         lights_panel.setBackground(new java.awt.Color(0, 0, 0));
         lights_panel.setForeground(new java.awt.Color(255, 255, 255));
         lights_panel.setAutoscrolls(true);
-        lights_panel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        lights_panel.setLayout(new java.awt.GridBagLayout());
         lights_pane.setViewportView(lights_panel);
 
         getContentPane().add(lights_pane);

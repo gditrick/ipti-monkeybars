@@ -10,6 +10,8 @@ class LightBarView < ApplicationView
   def load
     @current_x_pos = 0
     @current_y_pos = 0
+    @current_width = 0
+    @constraints = Java::JavaAwt::GridBagConstraints.new
     lights_panel.remove_all
   end
 
@@ -32,20 +34,22 @@ class LightBarView < ApplicationView
   end
 
   def add_device(nested_view, nested_component, model, transfer)
-    #pp nested_component
-    lights_panel.add  nested_component
-    pp screen_size.width
-    if @current_x_pos + nested_view.width > screen_size.width
+    if @current_width + nested_view.width > screen_size.width
       pp "New Line of Lights"
-      @current_x_pos = 0
-      @current_y_pos +=  nested_view.height + 10
+      @current_width =  0
+      @current_x_pos =  0
+      @current_y_pos += 1
     end
-    nested_component.set_location(@current_x_pos, @current_y_pos)
+    @constraints.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
+    @constraints.gridx = @current_x_pos
+    @constraints.gridy = @current_y_pos
+    lights_panel.add(nested_component, @constraints)
+    #nested_component.set_location(@current_x_pos, @current_y_pos)
     #if lights_panel.width <= @current_x_pos + nested_view.width
     #  lights_panel.width(@current_x_pos + nested_view.width)
     #end
-    @current_x_pos += nested_view.width
-    pp @current_x_pos
+    @current_x_pos += 1
+    @current_width += nested_view.width
     #lights_panel.validate
     #lights_panel.repaint
     #lights_pane.validate
