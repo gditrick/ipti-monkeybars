@@ -48,7 +48,6 @@ def show_error_dialog_and_exit(exception, thread=nil)
 end
 GlobalErrorHandler.on_error {|exception, thread| show_error_dialog_and_exit(exception, thread) }
 
-require 'light_bar_model'
 require 'ipti_configuration'
 
 Dir.glob(File.dirname(__FILE__) + '/**/*_controller.rb').each{|f| require(f) }

@@ -11,16 +11,16 @@ class OcModuleController < ApplicationController
       options = Hash[*args.flatten]
       if options.has_key?(:model)
         model = options[:model]
-        update_model(model)
+        update_model(model, *model.attributes)
       end
     end
   end
 
   def led_button_action_performed
-    model.text      = ""
-    model.ledState  = :off
-    model.upState   = :off
-    model.downState = :off
+    model.text       = ""
+    model.led_state  = :off
+    model.up_state   = :off
+    model.down_state = :off
     update_view
   end
 

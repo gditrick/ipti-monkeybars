@@ -1,4 +1,4 @@
-class OcModuleModel
+class OcModuleModel < AbstractModel
   attr_accessor :address,
                 :controller_klass,
                 :text,

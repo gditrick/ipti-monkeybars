@@ -1,4 +1,4 @@
-class BayModuleModel
+class BayModuleModel < AbstractModel
   attr_accessor :address,
                 :controller_klass,
                 :d4_starting_address,

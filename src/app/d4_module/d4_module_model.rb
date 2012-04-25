@@ -1,4 +1,4 @@
-class D4ModuleModel
+class D4ModuleModel < AbstractModel
   attr_accessor :address,
                 :controller_klass,
                 :digits,

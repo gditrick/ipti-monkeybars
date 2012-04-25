@@ -9,7 +9,7 @@ class LightBarController < ApplicationController
       options = Hash[*args.flatten]
       if options.has_key?(:model)
         model = options[:model]
-        update_model(model)
+        update_model(model, *model.attributes)
       end
     end
     @controllers ||= []
