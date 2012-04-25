@@ -3,6 +3,7 @@ class BayModuleModel
                 :controller_klass,
                 :d4_starting_address,
                 :devices,
+                :index,
                 :lp_starting_address,
                 :main_oc,
                 :number_of_4d,
