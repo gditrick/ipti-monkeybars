@@ -85,9 +85,9 @@ begin
   app = IPTIApp.new(:light_bar => model)
 
   EM::run do
-    app.connect
     controller = eval("#{controller_klass}.instance")
     controller.open(:model => model)
+    EM.add_periodic_timer(5) { app.connect if app.not_connected? }
   end
   # Your application code goes here
 rescue => e

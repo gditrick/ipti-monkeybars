@@ -3,15 +3,26 @@ require 'pp'
 
 module IPTI
   module PickMaxProtocol
+    attr_reader :data_received, :in_queue, :out_queue
+
+    def initialize
+      @data_received = ""
+      @in_queue      = EM::Queue.new
+      @out_queue     = EM::Queue.new
+    end
+
     def receive_data(data)
       @data_received << data
       @data_received.split(/[\001\003]/).each do |msg|
         next if msg.size == 0
-puts "received: " + msg
-        process_message(msg)
+        puts "received: " + msg
+        @in_queue.push msg
         @data_received.delete!("\001" + msg + "\003")
         @data_received.lstrip!
       end
+    end
+
+    def process_receive_queue
     end
 
     def process_message(msg)

@@ -3,7 +3,7 @@ require 'ipti'
 require 'client/pick_max_protocol'
 
 class IPTIApp
-  attr_accessor :light_bar
+  attr_accessor :light_bar, :connected
   def initialize(*args)
     @light_bar = LightBarModel.new
     unless args.compact.empty?
@@ -27,10 +27,19 @@ class IPTIApp
     if @light_bar.remote_host_port.nil?
       raise 'No remote host port define to connect to'
     end
+    @connected = false
+  end
 
-    def connect
-      puts "Try connecting to #{@light_bar.remote_host_ip}:#{@light_bar.remote_host_port}"
-      EM::connect(@light_bar.remote_host_ip, @light_bar.remote_host_port, IPTI::Client::PickMaxProtocol)
-    end
+  def connected?
+    @connected
+  end
+
+  def not_connected?
+    not @connected
+  end
+
+  def connect
+    puts "Try connecting to #{@light_bar.remote_host_ip}:#{@light_bar.remote_host_port}"
+    EM::connect(@light_bar.remote_host_ip, @light_bar.remote_host_port, IPTI::Client::PickMaxProtocol)
   end
 end
