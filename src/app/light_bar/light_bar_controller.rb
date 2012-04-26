@@ -1,4 +1,3 @@
-require 'pp'
 class LightBarController < ApplicationController
   set_model 'LightBarModel'
   set_view 'LightBarView'

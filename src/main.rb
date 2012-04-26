@@ -48,7 +48,9 @@ def show_error_dialog_and_exit(exception, thread=nil)
 end
 GlobalErrorHandler.on_error {|exception, thread| show_error_dialog_and_exit(exception, thread) }
 
+require 'eventmachine'
 require 'ipti_configuration'
+require 'ipti_app'
 
 Dir.glob(File.dirname(__FILE__) + '/**/*_controller.rb').each{|f| require(f) }
 Dir.glob(File.dirname(__FILE__) + '/**/*_model.rb').each{|f| require(f) }
@@ -80,8 +82,13 @@ if File.exists?(configuration_file)
 end unless configuration_file.nil?
 
 begin
-  controller = eval("#{controller_klass}.instance")
-  controller.open(:model => model)
+  app = IPTIApp.new(:light_bar => model)
+
+  EM::run do
+    app.connect
+    controller = eval("#{controller_klass}.instance")
+    controller.open(:model => model)
+  end
   # Your application code goes here
 rescue => e
   show_error_dialog_and_exit(e)

@@ -1,4 +1,3 @@
-require 'pp'
 class BayModuleController < ApplicationController
   set_model 'BayModuleModel'
   set_view  'BayModuleView'

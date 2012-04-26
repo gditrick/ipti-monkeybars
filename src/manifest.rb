@@ -50,8 +50,9 @@ require 'application_view'
 # appended to the load path (useful for JRuby libs that need your jar directory on
 # the load path).
 #
-# add_to_load_path "../lib/java"
-#
+#add_to_load_path "../lib/java"
+#add_to_load_path "../lib/ruby"
+
 
 case Monkeybars::Resolver.run_location
 when Monkeybars::Resolver::IN_FILE_SYSTEM
