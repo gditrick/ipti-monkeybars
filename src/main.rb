@@ -87,7 +87,9 @@ begin
   EM::run do
     controller = eval("#{controller_klass}.instance")
     controller.open(:model => model)
-    EM.add_periodic_timer(5) { app.connect if app.not_connected? }
+    EM::PeriodicTimer.new(5) do
+      app.connect if app.not_connected?
+    end
   end
   # Your application code goes here
 rescue => e

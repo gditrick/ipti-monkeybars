@@ -1,6 +1,6 @@
 module IPTI
   module Client
-    class IptiInterfaceController < IPTI::Controller
+    class InterfaceController < IPTI::Controller
       attr_accessor :version, :bay_polling, :number_of_bays, :starting_bay_number, :bay_controllers
 
       message_type :heartbeat,    :code => "01"
@@ -10,9 +10,9 @@ module IPTI
       message_type :version,      :code => "97", :response_handler => :set_version
       message_type :reset,        :code => "99", :response_handler => :reset_received
 
-      def initialize(address, connection)
-        super(address, connection)
-        IptiInterfaceController.instances[IPTI::Controller.key(connection, address)] = self
+      def initialize(address)
+        super(address)
+        InterfaceController.instances[IPTI::Controller.key(address)] = self
       end
 
       def set_number_of_bays(msg)

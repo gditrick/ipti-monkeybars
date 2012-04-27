@@ -1,6 +1,6 @@
 module IPTI
   module Server
-    class IptiInterfaceController < IPTI::Controller
+    class InterfaceController < IPTI::Controller
       attr_accessor :version, :bay_polling, :number_of_bays, :starting_bay_number, :bay_controllers
 
       message_type :heartbeat,    :code => "01"

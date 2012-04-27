@@ -1,6 +1,6 @@
 module IPTI
   module Client
-    class IptiBayController < IPTI::Controller
+    class BayController < IPTI::Controller
       attr_accessor :four_digit_modules, :light_pick_modules
 
       message_type :heartbeat,           :code => "01"

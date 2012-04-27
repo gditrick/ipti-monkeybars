@@ -116,17 +116,21 @@ module IPTI
       @instances
     end
 
-    def self.key(connection, address)
-      connection.ip.to_s + ":" + connection.port.to_s + ':' + address.to_s
+    def self.key(address, connection=nil)
+      if connection.nil?
+        address.to_s
+      else
+        connection.ip.to_s + ":" + connection.port.to_s + ':' + address.to_s
+      end
     end
 
-    def initialize(address, connection)
+    def initialize(address, connection=nil)
       @seq        = ""
       @address    = address
       @connection = connection
       @in_queue   = EventMachine::Queue.new
       @out_queue  = EventMachine::Queue.new
-      Controller.instances[Controller.key(connection, address)] = self
+      Controller.instances[Controller.key(address, connection)] = self
       super()
     end
 

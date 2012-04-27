@@ -1,9 +1,11 @@
 require 'eventmachine'
 require 'ipti'
+require 'client/interface_controller'
 require 'client/pick_max_protocol'
 
 class IPTIApp
-  attr_accessor :light_bar, :connected
+  attr_accessor :light_bar, :connected, :interface_controller
+
   def initialize(*args)
     @light_bar = LightBarModel.new
     unless args.compact.empty?
@@ -28,6 +30,7 @@ class IPTIApp
       raise 'No remote host port define to connect to'
     end
     @connected = false
+    @interface_controller = IPTI::Client::InterfaceController.new('EF')
   end
 
   def connected?
@@ -40,6 +43,6 @@ class IPTIApp
 
   def connect
     puts "Try connecting to #{@light_bar.remote_host_ip}:#{@light_bar.remote_host_port}"
-    EM::connect(@light_bar.remote_host_ip, @light_bar.remote_host_port, IPTI::Client::PickMaxProtocol)
+    EM::connect(@light_bar.remote_host_ip, @light_bar.remote_host_port, IPTI::Client::PickMaxProtocol, self)
   end
 end
