@@ -56,8 +56,8 @@ module IPTI
       @in_queue_mutex  = Mutex.new
       @out_queue       = EM::Queue.new
       @out_queue_mutex = Mutex.new
-      @in_timer        = EM::PeriodicTimer(0.01) { process_in_queue }
-      @out_timer       = EM::PeriodicTimer(0.01) { process_out_queue }
+      @in_timer        = EM::PeriodicTimer.new(0.01) { process_in_queue }
+      @out_timer       = EM::PeriodicTimer.new(0.01) { process_out_queue }
     end
 
     def push_out_msg(msg)
