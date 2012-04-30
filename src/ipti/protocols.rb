@@ -38,8 +38,8 @@ module IPTI
 
     def unbind
       pp "Connection closed to server" if @app.connected?
-      @in_timer.cancel
-      @out_timer.cancel
+      @in_timer.cancel unless @in_timer.nil?
+      @out_timer.cancel unless @out_timer.nil?
       @app.connected = false
       @data_received = ""
       @in_queue      = nil

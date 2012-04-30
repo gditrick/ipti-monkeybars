@@ -13,6 +13,7 @@ class BayModuleView < ApplicationView
     @current_x_pos = 0
     @current_y_pos = 0
     @current_width = 0
+    @max_width = 0
     @constraints = Java::JavaAwt::GridBagConstraints.new
     lights_panel.remove_all
   end
@@ -54,5 +55,6 @@ class BayModuleView < ApplicationView
     lights_panel.add(nested_component, @constraints)
     @current_x_pos += 1
     @current_width += nested_view.width
+    @max_width = @current_width if @current_width > @max_width
   end
 end
