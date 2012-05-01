@@ -49,8 +49,17 @@ module IPTI
     end
 
     def connection
+      controller = IPTI::Controller.instances[IPTI::Controller.key('EF')]
+      IPTI::Controller.instances.delete(IPTI::Controller.key('EF'))
       @app.connected = true
       @port, @ip = Socket.unpack_sockaddr_in(get_peername)
+      @app.interface_controller = IPTI::Client::InterfaceController.new('EF', self)
+      @app.interface_controller.connect
+      @app.light_bar.bays do |bay|
+        bay.bay_controller = IPTI::Client::BayController.new(bay.address, self)
+#        bay.bay_controller.connect
+      end
+      @data_received   = ""
       @data_received   = ""
       @in_queue        = EM::Queue.new
       @in_queue_mutex  = Mutex.new
@@ -60,16 +69,21 @@ module IPTI
       @out_timer       = EM::PeriodicTimer.new(0.01) { process_out_queue }
     end
 
-    def push_out_msg(msg)
+    def push_out_msg(msg_hash)
+pp "Push out msg: #{msg_hash}"
       @out_queue_mutex.synchronize do
-        @out_queue.push msg
+        @out_queue.push msg_hash
       end
     end
 
     def process_out_queue
       @out_queue_mutex.synchronize do
         unless @out_queue.empty?
-          @out_queue.pop{|msg| send_data(msg)}
+          @out_queue.pop do |msg_hash|
+            pp "Send Data msg:"
+            pp msg_hash
+            send_data(msg_hash[:data], msg_hash[:controller], msg_hash[:type], msg_hash[:fields])
+          end
         end
       end
     end
@@ -101,48 +115,24 @@ module IPTI
 
     def message_handler(msg, code, addr, seq=nil)
       controller = IPTI::Controller.instances[IPTI::Controller.key(addr, self)]
-      controller.push_in_msg(msg)
+      controller.push_in_msg({:code => code, :msg => msg, :seq => seq})
     end
-#      m_type = controller.message_types[code.to_sym]
-#  pp "IN -> #{controller.address}:#{controller.state_name}"
-#      case controller.state_name
-#        when :processing_request
-#          controller.in_queue.push{|q| msg }
-#        when :waiting
-#          controller.receive_request
-#          send_data(m_type.ack_response(msg), controller.address)
-#          if m_type.process_message(controller, msg)
-#            controller.bump_seq
-#            controller.request_processed
-#          end
-#        when :waiting_for_reply
-#          if m_type.process_message(controller, msg)
-#            controller.bump_seq
-#            controller.reply_processed
-#          end
-#        else
-#          raise "Controller state invalid: #{controller.state}"
-#      end
-#pp "OUT -> #{controller.address}:#{controller.state_name}"
-#      check_queues
-#    end
 
-#    def send_data(data, address, message_type=nil, fields={})
-#      controller = IPTI::Controller.instances[IPTI::Controller.key(self, address)]
-#pp "IN -> #{controller.address}:#{controller.state_name}"
+    def send_data(data, controller, message_type=nil, *fields)
+pp "IN -> #{controller.address}:#{controller.state_name}"
 #pp controller
-#      unless message_type.nil?
-#        data = message_type.message(controller.address, controller.seq, fields)
-#      end
-#      msg = "\001" + data + PickMaxProtocol.check_sum(data) + "\003"
-#      if controller.state_name == :waiting_for_reply
-#        # Queue Message
-#        controller.out_queue.push([data, address, message_type, fields])
-#      else
-#        controller.send_request
-#pp "send: " + msg
-#        super msg
-#      end
+      unless message_type.nil?
+        data = message_type.message(controller, *fields)
+      end
+      data += "\006" if controller.state_name == :send_ack
+      msg   = "\001"
+      msg  += data
+      msg  += IPTI::PickMaxProtocol.check_sum(data)
+      msg  += "\003"
+      controller.processed_request
+pp "send: " + msg
+      super msg
+    end
 #pp "OUT -> #{controller.address}:#{controller.state_name}"
 #      check_queues
 #    end

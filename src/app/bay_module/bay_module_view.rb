@@ -14,7 +14,8 @@ class BayModuleView < ApplicationView
     @current_y_pos = 0
     @current_width = 0
     @max_width = 0
-    @constraints = Java::JavaAwt::GridBagConstraints.new
+    @constraints = []
+    @constraints << Java::JavaAwt::GridBagConstraints.new
     lights_panel.remove_all
   end
 
@@ -48,11 +49,12 @@ class BayModuleView < ApplicationView
       @current_width =  0
       @current_x_pos =  0
       @current_y_pos += 1
+      @constraints << Java::JavaAwt::GridBagConstraints.new
+      @constraints.last.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
     end
-    @constraints.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
-    @constraints.gridx = @current_x_pos
-    @constraints.gridy = @current_y_pos
-    lights_panel.add(nested_component, @constraints)
+    @constraints.last.gridx = @current_x_pos
+    @constraints.last.gridy = @current_y_pos
+    lights_panel.add(nested_component, @constraints.last)
     @current_x_pos += 1
     @current_width += nested_view.width
     @max_width = @current_width if @current_width > @max_width

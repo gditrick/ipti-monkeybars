@@ -1,5 +1,6 @@
 class BayModuleModel < AbstractModel
   attr_accessor :address,
+                :bay_controller,
                 :controller_klass,
                 :d4_starting_address,
                 :devices,
