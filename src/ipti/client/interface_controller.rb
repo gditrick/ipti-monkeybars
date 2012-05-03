@@ -60,6 +60,11 @@ module IPTI
         end
       end
 
+      def format_number_bays(args=nil)
+        return '' if args.nil?
+        "%-2.2d%-2.2d" % [ args[0][:number_of_bays], args[0][:starting_bay_number]]
+      end
+
       def get_set_bay_polling(msg_hash)
         msg = msg_hash[:msg]
         if msg.size > 6
@@ -73,20 +78,15 @@ module IPTI
         bay_polling_msg
       end
 
+      def format_bay_polling(args=nil)
+        return '' if args.nil?
+        format_true_false(args[0][:bay_polling])
+      end
+
       def get_version(msg)
         version_msg = self.message_types[:version].message(self)
         self.ack
         version_msg
-      end
-
-      def format_number_bays(args=nil)
-        return '' if args.nil?
-        "%-2.2d%-2.2d" % [ args[0][:number_of_bays], args[0][:starting_bay_number]]
-      end
-
-      def format_bay_polling(args=nil)
-        return '' if args.nil?
-        format_true_false(args[0][:bay_polling])
       end
 
       def reset(msg)

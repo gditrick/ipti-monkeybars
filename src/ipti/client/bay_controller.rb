@@ -13,8 +13,10 @@ module IPTI
       message_type :turn_one_off,        :code => "05"
       message_type :turn_all_on,         :code => "06"
       message_type :turn_all_off,        :code => "07"
-      message_type :get_valid_oc,        :code => "30", :response_handler => :get_oc_modules, :formatter => :format_oc_modules
-      message_type :set_num_of_devices,  :code => "81", :response_handler => :get_modules,    :formatter => :format_modules
+      message_type :oc_display,          :code => "27", :response_handler => :oc_display_text,  :formatter => :format_oc_display_text
+      message_type :get_valid_oc,        :code => "30", :response_handler => :get_oc_modules,   :formatter => :format_oc_modules
+      message_type :d4_display,          :code => "33", :response_handler => :d4_display_order, :formatter => :format_d4_display_order
+      message_type :set_num_of_devices,  :code => "81", :response_handler => :get_modules,      :formatter => :format_modules
       message_type :reset,               :code => "99", :response_handler => :reset
 
       def initialize(address, connection)
@@ -45,19 +47,25 @@ module IPTI
       end
 
       def connect_comm
-        @in_queue   = EventMachine::Queue.new
-        @out_queue  = EventMachine::Queue.new
+        @in_queue        = EventMachine::Queue.new
+        @out_queue       = EventMachine::Queue.new
         @in_queue_mutex  = Mutex.new
         @out_queue_mutex = Mutex.new
         @in_timer        = EM::PeriodicTimer.new(0.01) { process_in_queue }
         @out_timer       = EM::PeriodicTimer.new(0.01) { process_out_queue }
-        #@number_of_bays  = @connection.app.light_bar.bays.size
-        #@starting_bay_number = @connection.app.light_bar.bays[0].address
-        #(0...@number_of_bays).each do |i|
-        #  bay_controller = IPTI::Client::BayController.new("%-2.2d" % (@starting_bay_number.to_i + i), @connection)
-        #  bay_controller.connect
-        #  @bay_controllers << bay_controller
-        #end
+        @bay_bus         = CommunicationBus.new
+        @bus_timer       = EM::PeriodicTimer.new(0.01) { process_comm_bus }
+        @d4_list.each{|a| a.bus = @bay_bus }
+        @oc_list.each{|a| a.bus = @bay_bus }
+        @lp_list.each{|a| a.bus = @bay_bus }
+      end
+
+      def process_comm_bus
+        bus_msg = @bay_bus.pop_bus_msg
+        unless bus_msg.nil?
+pp bus_msg
+raise "Stop Bus Comm"
+        end
       end
 
       def seq
@@ -94,8 +102,8 @@ module IPTI
       end
 
       def get_modules(msg_hash)
-        msg_hash.merge!({:fields => {:number_of_d4 => @d4_list.size,
-                                     :number_of_lp => @lp_list.size,
+        msg_hash.merge!({:fields => {:number_of_d4     => @d4_list.size,
+                                     :number_of_lp     => @lp_list.size,
                                      :starting_d4_addr => @d4_starting_addr,
                                      :starting_lp_addr => @lp_starting_addr
                                     }
@@ -111,6 +119,50 @@ module IPTI
                               args[0][:starting_lp_addr]
         ]
 
+      end
+
+      def d4_display_order(msg_hash)
+        msg =  msg_hash[:msg]
+        d4_addr = msg.slice(7,2)
+        d4_module = @d4_modules[d4_addr]
+        if d4_module.nil?
+          msg_hash.merge!({:fields => {:d4_address => d4_addr,
+                                       :success    => false }
+                          })
+        else
+          d4_module.push_msg(msg)
+          msg_hash.merge!({:fields => {:d4_address => d4_module.address,
+                                       :success    => true }
+          })
+        end
+        self.ack
+      end
+
+      def format_d4_display_order(args=nil)
+        return "'" if args.nil? or args.empty?
+        "%s%s" % [args[0][:d4_address], format_true_false(args[0][:success])]
+      end
+
+      def oc_display_text(msg_hash)
+        msg =  msg_hash[:msg]
+        oc_addr = msg.slice(7,2)
+        oc_module = @oc_modules[oc_addr]
+        if oc_module.nil?
+          msg_hash.merge!({:fields => {:success    => false }})
+        else
+          oc_module.push_msg(msg)
+          msg_hash.merge!({:fields => {:success    => true }})
+        end
+        self.ack
+      end
+
+      def format_oc_display_text(args=nil)
+        return "'" if args.nil? or args.empty?
+        if args[0][:success]
+          ""
+        else
+          "ER"
+        end
       end
     end
   end

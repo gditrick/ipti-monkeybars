@@ -15,6 +15,7 @@ class BayModuleController < ApplicationController
     model.devices.each do |device|
       c =  eval("#{device.controller_klass}.create_instance")
       @controllers << c
+      device.controller = c
       add_nested_controller(device.type_sym, c)
       c.open(:model => device)
     end
