@@ -4,7 +4,7 @@ require 'pp'
 
 module IPTI
   module PickMaxProtocol
-    attr_reader :data_received, :in_queue, :out_queue, :port, :ip
+    attr_reader :data_received, :in_queue, :out_queue, :port, :ip, :app
 
     def initialize(app)
       @app = app
@@ -70,7 +70,6 @@ module IPTI
     end
 
     def push_out_msg(msg_hash)
-pp "Push out msg: #{msg_hash}"
       @out_queue_mutex.synchronize do
         @out_queue.push msg_hash
       end
@@ -80,8 +79,6 @@ pp "Push out msg: #{msg_hash}"
       @out_queue_mutex.synchronize do
         unless @out_queue.empty?
           @out_queue.pop do |msg_hash|
-            pp "Send Data msg:"
-            pp msg_hash
             send_data(msg_hash[:data], msg_hash[:controller], msg_hash[:type], msg_hash[:fields])
           end
         end

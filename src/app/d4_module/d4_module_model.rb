@@ -1,3 +1,4 @@
+require 'abstract_model'
 class D4ModuleModel < AbstractModel
   attr_accessor :address,
                 :controller_klass,

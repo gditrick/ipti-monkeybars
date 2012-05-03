@@ -21,9 +21,6 @@ module IPTI
 
     def message(controller, *fields)
       if @formatter
-        pp @formatter
-        pp "fields:"
-        pp fields
         data = fields.flatten.compact.empty? ? controller.send(@formatter) : controller.send(@formatter, fields)
       elsif fields.flatten.compact.empty?
         data = ''
@@ -34,21 +31,21 @@ module IPTI
       controller.seq.to_s == '' ? controller.address.to_s + @code.to_s + data : controller.address.to_s + controller.seq + @code.to_s + data
     end
 
-    def process_message(controller, msg)
+    def process_message(controller, msg_hash)
       if @response_handler
-        controller.send(@response_handler, msg)
+        controller.send(@response_handler, msg_hash)
       else
-        process_ack(controller, msg)
+        process_ack(controller, msg_hash)
       end
     end
 
-    def process_ack(controller, msg)
+    def process_ack(controller, msg_hash)
       ack_msg = controller.address == 'EF' ?
-        controller.address + @code + "\006" :
-          controller.address + controller.seq.to_s + @code + "\006"
+        controller.address + msg_hash[:code] + "\006" :
+          controller.address + msg_hash[:seq].to_s + ':' + msg_hash[:code] + "\006"
 
-      ack_msg += PickMaxProtocol.check_sum(ack_msg)
-      msg == ack_msg
+      ack_msg += IPTI::PickMaxProtocol.check_sum(ack_msg)
+      msg_hash[:msg] == ack_msg
     end
 
     def response(ctl, msg_hash)
@@ -69,6 +66,43 @@ module IPTI
 
     attr_accessor :instances, :address, :connection, :seq, :message, :out_queue, :in_queue
 
+    state_machine :state, :initial => :no_comm do
+      after_transition [:idle] => :no_comm, :do => :disconnection
+      after_transition :no_comm => :idle, :do => :connect_comm
+
+      event :connect do
+        transition :no_comm => :idle
+      end
+
+      event :disconnect do
+        transition [:idle, :send_response] => :no_comm
+      end
+
+      event :ack do
+        transition [:send_response, :idle] => :send_ack
+      end
+
+      event :wait_for_ack do
+        transition [:send_response, :idle] => :waiting_for_ack
+      end
+
+      event :processing_ack do
+        transition :waiting_for_ack => :ack_processing
+      end
+
+      event :processed_ack do
+        transition :ack_processing => :idle
+      end
+
+      event :processing_request do
+        transition :idle => :send_response
+      end
+
+      event :processed_request do
+        transition [:send_response, :send_ack] => :idle
+      end
+    end
+
     def self.instances
       @instances ||= {}
       @instances
@@ -86,6 +120,7 @@ module IPTI
       @seq        = ""
       @address    = address
       @connection = connection
+      super()
       Controller.instances[Controller.key(address, connection)] = self
     end
 
@@ -102,10 +137,16 @@ module IPTI
       @in_queue_mutex.synchronize do
         unless @in_queue.empty?
           @in_queue.pop do |msg_hash|
-            self.processing_request
-            process_message(msg_hash)
+            case self.state_name
+              when :idle then
+                self.processing_request
+                process_message(msg_hash)
+              when :waiting_for_ack then
+                self.processing_ack
+                process_ack(msg_hash)
+            end
           end
-        end if self.idle?
+        end if self.idle? or self.waiting_for_ack?
       end
     end
 
@@ -124,7 +165,7 @@ module IPTI
                                       :controller => self,
                                       :fields => msg_hash[:fields]
             })
-            self.bump_seq
+            self.bump_seq unless self.waiting_for_ack?
           end
         end
       end
@@ -132,10 +173,17 @@ module IPTI
 
     def process_message(msg_hash)
       m_type = self.message_types[msg_hash[:code].to_sym]
-pp m_type
-pp "IN -> #{self.address}:#{self.state_name}"
-      response_msg = m_type.response(self, msg_hash)
-      push_out_msg(response_msg, m_type, msg_hash)
+      if m_type.nil?
+        raise "Message Type #{msg_hash[:code]} not implemented"
+      else
+        response_msg = m_type.response(self, msg_hash)
+        push_out_msg(response_msg, m_type, msg_hash)
+      end
+    end
+
+    def process_ack(msg_hash)
+      m_type = self.message_types[msg_hash[:code].to_sym]
+      self.processed_ack if m_type.process_ack(self, msg_hash)
     end
 
     def is_a_ipti_interface_controller?
@@ -151,8 +199,7 @@ pp "IN -> #{self.address}:#{self.state_name}"
     end
 
     def format_true_false(arg=nil)
-      return "'" if arg.nil? or arg.empty?
-      pp "arg #{arg}"
+      return "0'" if arg.nil?
       arg == true ? "1" : "0"
     end
 
