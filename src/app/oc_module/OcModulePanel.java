@@ -39,10 +39,9 @@ public class OcModulePanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(235, 231, 45));
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         setAutoscrolls(true);
-        setMaximumSize(new java.awt.Dimension(290, 80));
-        setMinimumSize(new java.awt.Dimension(290, 80));
-        setPreferredSize(new java.awt.Dimension(290, 80));
-        setSize(new java.awt.Dimension(290, 80));
+        setMaximumSize(new java.awt.Dimension(320, 80));
+        setMinimumSize(new java.awt.Dimension(320, 80));
+        setPreferredSize(new java.awt.Dimension(320, 80));
 
         upButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         upButton.setAlignmentY(0.0F);
@@ -63,14 +62,14 @@ public class OcModulePanel extends javax.swing.JPanel {
         downButton.setMinimumSize(new java.awt.Dimension(25, 25));
         downButton.setPreferredSize(new java.awt.Dimension(25, 25));
 
+        displayText.setBackground(java.awt.Color.darkGray);
         displayText.setEditable(false);
-        displayText.setFont(new java.awt.Font("DejaVu Sans", 0, 22)); // NOI18N
-        displayText.setText("888888888888");
+        displayText.setFont(new java.awt.Font("Nimbus Mono L", 1, 29)); // NOI18N
+        displayText.setForeground(java.awt.Color.red);
+        displayText.setText("PYRMD OR KG BX");
         displayText.setDoubleBuffered(true);
-        displayText.setMaximumSize(new java.awt.Dimension(190, 40));
-        displayText.setMinimumSize(new java.awt.Dimension(190, 40));
-        displayText.setPreferredSize(new java.awt.Dimension(190, 40));
-        displayText.setSize(new java.awt.Dimension(190, 40));
+        displayText.setMaximumSize(new java.awt.Dimension(210, 40));
+        displayText.setMinimumSize(new java.awt.Dimension(210, 40));
         displayText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 displayTextActionPerformed(evt);
@@ -93,23 +92,27 @@ public class OcModulePanel extends javax.swing.JPanel {
                     .addComponent(upButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(downButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
-                .addComponent(displayText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(displayText, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addComponent(upButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(downButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(displayText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(displayText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(upButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(5, 5, 5)
+                                .addComponent(downButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap())
         );
 
         upButton.getAccessibleContext().setAccessibleName("");

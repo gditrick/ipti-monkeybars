@@ -11,100 +11,136 @@ configuration: !ruby/object:IptiConfiguration
         devices:
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
-            address: "01"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
-            address: "02"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
-            address: "03"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
-            address: "04"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
-            address: "05"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
-            address: "06"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
-            address: "07"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
-            address: "08"
-            controller_klass: D4ModuleController
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-          - !ruby/object:D4ModuleModel
-            add_state: !ruby/sym off
             address: "09"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
             address: "10"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
             address: "11"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
             address: "12"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "13"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "14"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "15"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "16"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "01"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "02"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "03"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
+          - !ruby/object:D4ModuleModel
+            add_state: !ruby/sym off
+            address: "04"
+            controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
+            led_state: !ruby/sym off
+            sub_state: !ruby/sym off
+            digits: ""
+            type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
           - !ruby/object:OcModuleModel &id001
             address: "01"
             controller_klass: OcModuleController
@@ -112,40 +148,53 @@ configuration: !ruby/object:IptiConfiguration
             led_state: !ruby/sym off
             main_oc: true
             up_state: !ruby/sym off
+            task_state: !ruby/sym off
             text: ""
             type_sym: !ruby/sym oc
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
-            address: "13"
+            address: "05"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
-            address: "14"
+            address: "06"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
-            address: "15"
+            address: "07"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
           - !ruby/object:D4ModuleModel
             add_state: !ruby/sym off
-            address: "16"
+            address: "08"
             controller_klass: D4ModuleController
+            down_arrow_color: !ruby/sym gray
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             sub_state: !ruby/sym off
             digits: ""
             type_sym: !ruby/sym d4
+            up_arrow_color: !ruby/sym gray
         lp_starting_address: 01
         main_oc: *id001
         number_of_4d: 16
@@ -160,18 +209,24 @@ configuration: !ruby/object:IptiConfiguration
 #            add_state: !ruby/sym off
 #            address: "01"
 #            controller_klass: D4ModuleController
+#            down_arrow_color: !ruby/sym gray
+#            led_color: !ruby/sym light_gray
 #            led_state: !ruby/sym off
 #            sub_state: !ruby/sym off
 #            digits: ""
 #            type_sym: !ruby/sym d4
+#            up_arrow_color: !ruby/sym gray
 #          - !ruby/object:D4ModuleModel
 #            add_state: !ruby/sym off
 #            address: "02"
 #            controller_klass: D4ModuleController
+#            down_arrow_color: !ruby/sym gray
+#            led_color: !ruby/sym light_gray
 #            led_state: !ruby/sym off
 #            sub_state: !ruby/sym off
 #            digits: ""
 #            type_sym: !ruby/sym d4
+#            up_arrow_color: !ruby/sym gray
 #          - !ruby/object:OcModuleModel &id001
 #            address: "01"
 #            controller_klass: OcModuleController
@@ -179,24 +234,31 @@ configuration: !ruby/object:IptiConfiguration
 #            led_state: !ruby/sym off
 #            main_oc: true
 #            up_state: !ruby/sym off
+#            task_state: !ruby/sym off
 #            text: ""
 #            type_sym: !ruby/sym oc
 #          - !ruby/object:D4ModuleModel
 #            add_state: !ruby/sym off
 #            address: "03"
 #            controller_klass: D4ModuleController
+#            down_arrow_color: !ruby/sym gray
+#            led_color: !ruby/sym light_gray
 #            led_state: !ruby/sym off
 #            sub_state: !ruby/sym off
 #            digits: ""
 #            type_sym: !ruby/sym d4
+#            up_arrow_color: !ruby/sym gray
 #          - !ruby/object:D4ModuleModel
 #            add_state: !ruby/sym off
 #            address: "04"
 #            controller_klass: D4ModuleController
+#           down_arrow_color: !ruby/sym gray
+#            led_color: !ruby/sym light_gray
 #            led_state: !ruby/sym off
 #            sub_state: !ruby/sym off
 #            digits: ""
 #            type_sym: !ruby/sym d4
+#            up_arrow_color: !ruby/sym gray
 #        lp_starting_address: 01
 #        main_oc: *id001
 #        number_of_4d: 16

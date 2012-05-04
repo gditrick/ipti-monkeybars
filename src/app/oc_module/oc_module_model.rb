@@ -1,14 +1,16 @@
-require 'eventmachine'
-
 class OcModuleModel < AbstractModel
   attr_accessor :address,
                 :controller_klass,
                 :controller,
                 :text,
                 :led_state,
+                :task_state,
                 :up_state,
                 :down_state,
                 :main_oc,
+                :scroll_text,
+                :scroll_index,
+                :timers,
                 :type_sym,
                 :bus
 
@@ -40,14 +42,53 @@ class OcModuleModel < AbstractModel
       unless @in_queue.empty?
         @in_queue.pop do |msg|
           led_states    = msg.slice(9,1)
-          control_byte  = msg.slice(10,1)
+          control_byte  = msg.slice(10,1).hex
           text          = msg.slice(11..-3)
-          self.text     = text
+          text.slice!(29..-1)
+
+          @timers       = []
+          @scroll_text  = nil
+          @scroll_index = 0
+
+          if text.size > 12
+            @text        = "            "
+            @scroll_text = "         " + text
+          else
+            @text        = text
+          end
+
+          case led_states
+            when "0" then
+              @led_state = :off
+            when "1" then
+              @led_state = :fast
+            when "2" then
+              @led_state = :slow
+            when "3" then
+              @led_state = :on
+          end
+
+          if control_byte & 1 == 1
+            @task_state = :on
+          else
+            @task_state = :off
+          end
+
+          if control_byte & 2 == 2
+            @up_state = :on
+          else
+            @up_state = :off
+          end
+
+          if control_byte & 4 == 4
+            @down_state = :on
+          else
+            @down_state = :off
+          end
 pp "LED States: <#{led_states}>"
 pp "Control Byte: <#{control_byte}>"
 pp "Text: <#{text}>"
-          @controller.update_view
-          @controller.update_view
+          @controller.activate_module(self)
         end
       end
     end
