@@ -10,7 +10,6 @@
         <LineBorder/>
       </Border>
     </Property>
-    <Property name="autoscrolls" type="boolean" value="true"/>
     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[320, 80]"/>
     </Property>
@@ -20,6 +19,10 @@
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[320, 80]"/>
     </Property>
+    <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[320, 80]"/>
+    </Property>
+    <Property name="verifyInputWhenFocusTarget" type="boolean" value="false"/>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -43,7 +46,7 @@
                   <Component id="downButton" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="displayText" pref="231" max="32767" attributes="0"/>
+              <Component id="displayText" pref="237" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="ledButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>

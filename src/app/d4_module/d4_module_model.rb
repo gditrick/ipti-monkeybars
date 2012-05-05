@@ -162,11 +162,7 @@ class D4ModuleModel < AbstractModel
 
           @current_display_index = 0
           @digits                = @display_items[@current_display_index]
-pp "Blink #{@blink_leds}"
-pp "Slow Blinkers"
-pp @slow_blinkers
-pp "Fast Blinkers"
-pp @fast_blinkers
+
           @controller.activate_module(self)
         end
       end

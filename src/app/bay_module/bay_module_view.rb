@@ -9,7 +9,7 @@ class BayModuleView < ApplicationView
   nest :sub_view => :oc,   :using => [:add_oc, :remove_oc]
   nest :sub_view => :d4,   :using => [:add_d4, :remove_d4]
 
-  def load
+  def load(*args)
     @current_x_pos = 0
     @current_y_pos = 0
     @current_width = 0
@@ -57,6 +57,6 @@ class BayModuleView < ApplicationView
     lights_panel.add(nested_component, @constraints.last)
     @current_x_pos += 1
     @current_width += nested_view.width
-    @max_width = @current_width if @current_width > @max_width
+    @max_width = @current_width if @current_width >= @max_width
   end
 end
