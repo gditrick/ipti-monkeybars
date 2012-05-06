@@ -195,6 +195,7 @@ configuration: !ruby/object:IptiConfiguration
             digits: ""
             type_sym: !ruby/sym d4
             up_arrow_color: !ruby/sym gray
+        light_groupings:
         lp_starting_address: 01
         main_oc: *id001
         number_of_4d: 16

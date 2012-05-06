@@ -5,6 +5,7 @@ class BayModuleModel < AbstractModel
                 :d4_starting_address,
                 :devices,
                 :index,
+                :light_groupings,
                 :lp_starting_address,
                 :main_oc,
                 :number_of_4d,

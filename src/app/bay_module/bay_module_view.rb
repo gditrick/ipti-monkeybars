@@ -6,16 +6,19 @@ class BayModuleView < ApplicationView
 
   map  :model => :address, :view => "bay_address.text", :using => [:address_to_tab_title, :tab_title_to_address]
 
-  nest :sub_view => :oc,   :using => [:add_oc, :remove_oc]
-  nest :sub_view => :d4,   :using => [:add_d4, :remove_d4]
+  nest :sub_view => :light_group, :using => [:add_light_group, :remove_light_group]
+  nest :sub_view => :oc,          :using => [:add_oc, :remove_oc]
+  nest :sub_view => :d4,          :using => [:add_d4, :remove_d4]
 
-  def load(*args)
+  def load
     @current_x_pos = 0
     @current_y_pos = 0
     @current_width = 0
     @max_width = 0
     @constraints = []
     @constraints << Java::JavaAwt::GridBagConstraints.new
+    #@constraints.last.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
+    @constraints.last.anchor = Java::JavaAwt::GridBagConstraints::LINE_START
     lights_panel.remove_all
   end
 
@@ -28,7 +31,16 @@ class BayModuleView < ApplicationView
     @main_view_component.parent.title_at(attr.to_i - 1).gsub("Bay ", "")
   end
 
+  def add_light_group(nested_view, nested_component, model, transfer)
+
+  end
+
+  def remove_light_group(nested_view, nested_component, model, transfer)
+    lights_panel.remove nested_component
+  end
+
   def add_oc(nested_view, nested_component, model, transfer)
+    @constraints.last.gridwidth = 2
     add_device(nested_view, nested_component, model, transfer)
   end
 
@@ -37,6 +49,7 @@ class BayModuleView < ApplicationView
   end
 
   def add_d4(nested_view, nested_component, model, transfer)
+    @constraints.last.gridwidth = 1
     add_device(nested_view, nested_component, model, transfer)
   end
 
@@ -50,7 +63,8 @@ class BayModuleView < ApplicationView
       @current_x_pos =  0
       @current_y_pos += 1
       @constraints << Java::JavaAwt::GridBagConstraints.new
-      @constraints.last.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
+      #@constraints.last.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
+      @constraints.last.anchor = Java::JavaAwt::GridBagConstraints::LINE_START
     end
     @constraints.last.gridx = @current_x_pos
     @constraints.last.gridy = @current_y_pos
