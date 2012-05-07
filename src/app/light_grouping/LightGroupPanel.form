@@ -18,7 +18,7 @@
     <Property name="axis" type="int" value="3"/>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="lights_panel">
+    <Container class="javax.swing.JPanel" name="light_group_panel">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="0" red="0" type="rgb"/>
@@ -30,13 +30,5 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
     </Container>
-    <Component class="javax.swing.JLabel" name="bay_address">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel1"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="bay_address.setVisible(false);"/>
-      </AuxValues>
-    </Component>
   </SubComponents>
 </Form>
