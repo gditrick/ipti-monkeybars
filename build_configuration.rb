@@ -2,7 +2,7 @@ configuration do |c|
 	# The name for your resulting application file (e.g., if the project_name is 'foo' then you'll get foo.jar, foo.exe, etc.)
 	# default value: "ipti_lights3"
 	#
-	#c.project_name = "ipti_lights3"
+	c.project_name = "ipti_light_bar"
 
 	# Undocumented option 'output_dir'
 	# default value: "package"
@@ -17,12 +17,12 @@ configuration do |c|
 	# The fully-qualified name of the main Java file used to initiate the application.
 	# default value: "org.rubyforge.rawr.Main"
 	#
-	#c.main_java_file = "org.rubyforge.rawr.Main"
+	c.main_java_file = "org.rubyforge.rawr.Main"
 
 	# A list of directories where source files reside
 	# default value: ["src"]
 	#
-	#c.source_dirs = ["src"]
+	c.source_dirs = ["src", "lib/ruby"]
 
 	# A list of regexps of files to exclude
 	# default value: []
@@ -32,7 +32,7 @@ configuration do |c|
 	# Whether Ruby source files should be compiled into .class files
 	# default value: true
 	#
-	#c.compile_ruby_files = true
+	c.compile_ruby_files = false
 
 	# A list of individual Java library files to include.
 	# default value: []
@@ -42,17 +42,17 @@ configuration do |c|
 	# A list of directories for rawr to include . All files in the given directories get bundled up.
 	# default value: ["lib/java"]
 	#
-	#c.java_lib_dirs = ["lib/java"]
+	c.java_lib_dirs = ["lib/java", "lib/ruby"]
 
 	# Undocumented option 'files_to_copy'
 	# default value: []
 	#
-	#c.files_to_copy = []
+	c.files_to_copy = ["ipti.yml"]
 
 	# Undocumented option 'target_jvm_version'
 	# default value: 1.6
 	#
-	#c.target_jvm_version = 1.6
+	c.target_jvm_version = 1.6
 
 	# Undocumented option 'jvm_arguments'
 	# default value: ""
