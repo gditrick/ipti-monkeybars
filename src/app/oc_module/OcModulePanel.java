@@ -41,6 +41,7 @@ public class OcModulePanel extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(320, 80));
         setMinimumSize(new java.awt.Dimension(320, 80));
         setPreferredSize(new java.awt.Dimension(320, 80));
+        setSize(new java.awt.Dimension(320, 80));
         setVerifyInputWhenFocusTarget(false);
 
         upButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
@@ -92,7 +93,7 @@ public class OcModulePanel extends javax.swing.JPanel {
                     .addComponent(upButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(downButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
-                .addComponent(displayText, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                .addComponent(displayText, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ledButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
