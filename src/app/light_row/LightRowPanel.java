@@ -2,18 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package app.light_grouping;
+package app.light_row;
 
 /**
  *
  * @author gregd
  */
-public class LightGroupPanel extends javax.swing.JPanel {
+public class LightRowPanel extends javax.swing.JPanel {
 
 	/**
 	 * Creates new form BayModulePanel
 	 */
-	public LightGroupPanel() {
+	public LightRowPanel() {
 		initComponents();
 	}
 

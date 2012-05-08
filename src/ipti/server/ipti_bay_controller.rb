@@ -34,7 +34,6 @@ module IPTI
         reset_msg += PickMaxProtocol.check_sum(reset_msg)
         if msg == reset_msg
           @seq = msg.slice(2,2).to_i
-pp "rest completed"
           self.request_processed
           self.reset_completed
         end

@@ -15,10 +15,9 @@ class BayModuleView < ApplicationView
     @current_y_pos = 0
     @current_width = 0
     @max_width = 0
-    @constraints = []
-    @constraints << Java::JavaAwt::GridBagConstraints.new
-    #@constraints.last.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
-    @constraints.last.anchor = Java::JavaAwt::GridBagConstraints::LINE_START
+    @constraint
+    @constraint =  Java::JavaAwt::GridBagConstraints.new
+    @constraint.anchor = Java::JavaAwt::GridBagConstraints::CENTER
     lights_panel.remove_all
   end
 
@@ -40,7 +39,7 @@ class BayModuleView < ApplicationView
   end
 
   def add_oc(nested_view, nested_component, model, transfer)
-    @constraints.last.gridwidth = 2
+    @constraint.gridwidth = 2
     add_device(nested_view, nested_component, model, transfer)
   end
 
@@ -49,7 +48,7 @@ class BayModuleView < ApplicationView
   end
 
   def add_d4(nested_view, nested_component, model, transfer)
-    @constraints.last.gridwidth = 1
+    @constraint.gridwidth = 1
     add_device(nested_view, nested_component, model, transfer)
   end
 
@@ -58,18 +57,15 @@ class BayModuleView < ApplicationView
   end
 
   def add_device(nested_view, nested_component, model, transfer)
-    if @current_width + nested_view.width > screen_size.width
+    if @current_width + nested_view.width > screen_size.width - 40
       @current_width =  0
       @current_x_pos =  0
       @current_y_pos += 1
-      @constraints << Java::JavaAwt::GridBagConstraints.new
-      #@constraints.last.fill  = Java::JavaAwt::GridBagConstraints::HORIZONTAL
-      @constraints.last.anchor = Java::JavaAwt::GridBagConstraints::LINE_START
     end
-    @constraints.last.gridx = @current_x_pos
-    @constraints.last.gridy = @current_y_pos
-    lights_panel.add(nested_component, @constraints.last)
-    @current_x_pos += 1
+    @constraint.gridx = @current_x_pos
+    @constraint.gridy = @current_y_pos
+    lights_panel.add(nested_component, @constraint)
+    @current_x_pos += @constraint.gridwidth
     @current_width += nested_view.width
     @max_width = @current_width if @current_width >= @max_width
   end

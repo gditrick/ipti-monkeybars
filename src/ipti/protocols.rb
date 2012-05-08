@@ -117,7 +117,6 @@ module IPTI
 
     def send_data(data, controller, message_type=nil, *fields)
 pp "IN -> #{controller.address}:#{controller.state_name}"
-#pp controller
       unless message_type.nil?
         data = message_type.message(controller, *fields)
       end
@@ -126,13 +125,15 @@ pp "IN -> #{controller.address}:#{controller.state_name}"
       msg  += data
       msg  += IPTI::PickMaxProtocol.check_sum(data)
       msg  += "\003"
-      controller.processed_request
+      case controller.state_name
+        when :idle then
+          controller.wait_for_ack
+        else
+          controller.processed_request
+      end
 pp "send: " + msg
       super msg
     end
-#pp "OUT -> #{controller.address}:#{controller.state_name}"
-#      check_queues
-#    end
 
   def check_queues
       IPTI::Controller.instances.each do |key, controller|

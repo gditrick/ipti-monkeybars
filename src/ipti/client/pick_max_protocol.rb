@@ -30,6 +30,11 @@ module IPTI
 
     class BusMessage
       attr_accessor :code, :fields
+
+      def initialize(code=nil)
+        @code   = code
+        @fields = {}
+      end
     end
 
     class PickMaxProtocol < EventMachine::Connection

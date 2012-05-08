@@ -8,7 +8,8 @@ package app.light_grouping;
  *
  * @author gregd
  */
-public class LightGroupPanel extends javax.swing.JPanel {
+public class LightGroupPanel extends javax.swing.JPanel
+{
 
 	/**
 	 * Creates new form BayModulePanel

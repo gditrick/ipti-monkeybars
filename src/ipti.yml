@@ -145,6 +145,7 @@ configuration: !ruby/object:IptiConfiguration
             address: "01"
             controller_klass: OcModuleController
             down_state: !ruby/sym off
+            led_color: !ruby/sym light_gray
             led_state: !ruby/sym off
             main_oc: true
             up_state: !ruby/sym off
@@ -232,6 +233,7 @@ configuration: !ruby/object:IptiConfiguration
 #            address: "01"
 #            controller_klass: OcModuleController
 #            down_state: !ruby/sym off
+#            led_color: !ruby/sym light_gray
 #            led_state: !ruby/sym off
 #            main_oc: true
 #            up_state: !ruby/sym off

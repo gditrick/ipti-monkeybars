@@ -176,6 +176,7 @@ module IPTI
       if m_type.nil?
         raise "Message Type #{msg_hash[:code]} not implemented"
       else
+        msg_hash.merge!({:type => m_type})
         response_msg = m_type.response(self, msg_hash)
         push_out_msg(response_msg, m_type, msg_hash)
       end
@@ -183,6 +184,7 @@ module IPTI
 
     def process_ack(msg_hash)
       m_type = self.message_types[msg_hash[:code].to_sym]
+      msg_hash.merge!({:type => m_type})
       self.processed_ack if m_type.process_ack(self, msg_hash)
     end
 

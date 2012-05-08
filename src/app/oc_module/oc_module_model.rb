@@ -1,18 +1,23 @@
 class OcModuleModel < AbstractModel
   attr_accessor :address,
+                :blink,
+                :bus,
                 :controller_klass,
                 :controller,
-                :text,
-                :led_state,
-                :task_state,
-                :up_state,
                 :down_state,
+                :fast_blinkers,
+                :fast_blink_count,
+                :led_color,
+                :led_state,
                 :main_oc,
                 :scroll_text,
                 :scroll_index,
-                :timers,
+                :slow_blinkers,
+                :slow_blink_count,
+                :task_state,
+                :text,
                 :type_sym,
-                :bus
+                :up_state
 
   def initialize(addr="01")
     @address          = addr
@@ -40,57 +45,87 @@ class OcModuleModel < AbstractModel
   def process_in_queue
     @in_mutex.synchronize do
       unless @in_queue.empty?
-        @in_queue.pop do |msg|
-          led_states    = msg.slice(9,1)
-          control_byte  = msg.slice(10,1).hex
-          text          = msg.slice(11..-3)
-          text.slice!(29..-1)
-
-          @timers       = []
-          @scroll_text  = nil
-          @scroll_index = 0
-
-          if text.size > 12
-            @text        = "            "
-            @scroll_text = "         " + text
-          else
-            @text        = text
+        @in_queue.pop do |msg_hash|
+          case msg_hash[:type].type
+            when :oc_display then
+              display_text(msg_hash[:msg])
+              @controller.activate_module(self)
+            when :cancel_order
+              @controller.cancel
+            else
+              raise "Unknown OC Message Type #{msg_hash[:type]}"
           end
-
-          case led_states
-            when "0" then
-              @led_state = :off
-            when "1" then
-              @led_state = :fast
-            when "2" then
-              @led_state = :slow
-            when "3" then
-              @led_state = :on
-          end
-
-          if control_byte & 1 == 1
-            @task_state = :on
-          else
-            @task_state = :off
-          end
-
-          if control_byte & 2 == 2
-            @up_state = :on
-          else
-            @up_state = :off
-          end
-
-          if control_byte & 4 == 4
-            @down_state = :on
-          else
-            @down_state = :off
-          end
-pp "LED States: <#{led_states}>"
-pp "Control Byte: <#{control_byte}>"
-pp "Text: <#{text}>"
-          @controller.activate_module(self)
         end
       end
     end
+  end
+
+  def blink?
+    @blink
+  end
+
+  private
+
+  def display_text(msg)
+    led_states    = msg.slice(9,1)
+    control_byte  = msg.slice(10,1).hex
+    text          = msg.slice(11..-3)
+    text.slice!(29..-1)
+
+    @scroll_text  = nil
+    @scroll_index = 0
+    @blink        = false
+
+    @fast_blinkers = []
+    @slow_blinkers = []
+
+    @fast_blink_count = 0
+    @slow_blink_count = 0
+
+    if text.size > 12
+      @text        = "            "
+      @scroll_text = "         " + text
+    else
+      @text        = text
+    end
+
+    case led_states
+      when "0" then
+        @led_color  = :light_gray
+        @led_state  = :off
+        @task_state = :off
+      when "1" then
+        @led_state  = :fast
+        @task_state = :on
+        @fast_blinkers << :led
+      when "2" then
+        @led_state  = :slow
+        @task_state = :on
+        @slow_blinkers << :led
+      when "3" then
+        @led_color  = :deep_sky_blue
+        @led_state  = :on
+        @task_state = :on
+    end
+
+    if control_byte & 1 == 1
+      @task_state = :on
+    else
+      @task_state = :off
+    end
+
+    if control_byte & 2 == 2
+      @up_state = :on
+    else
+      @up_state = :off
+    end
+
+    if control_byte & 4 == 4
+      @down_state = :on
+    else
+      @down_state = :off
+    end
+
+    @blink = true unless @slow_blinkers.empty? and @fast_blinkers.empty?
   end
 end

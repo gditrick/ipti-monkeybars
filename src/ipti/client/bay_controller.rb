@@ -13,6 +13,7 @@ module IPTI
       message_type :turn_one_off,        :code => "05"
       message_type :turn_all_on,         :code => "06"
       message_type :turn_all_off,        :code => "07"
+      message_type :cancel_order,        :code => "14", :response_handler => :cancel_order,     :formatter => :format_cancel_order
       message_type :oc_display,          :code => "27", :response_handler => :oc_display_text,  :formatter => :format_oc_display_text
       message_type :get_valid_oc,        :code => "30", :response_handler => :get_oc_modules,   :formatter => :format_oc_modules
       message_type :d4_display,          :code => "33", :response_handler => :d4_display_order, :formatter => :format_d4_display_order
@@ -63,8 +64,13 @@ module IPTI
       def process_comm_bus
         bus_msg = @bay_bus.pop_bus_msg
         unless bus_msg.nil?
-pp bus_msg
-raise "Stop Bus Comm"
+          m_type = self.message_types[bus_msg.code]
+          unless m_type.nil?
+            self.bump_seq
+            @connection.push_out_msg({:data => '', :controller => self, :type => m_type, :fields => bus_msg.fields})
+          else
+            raise "Message Request #{bus_msg.code} not implemented"
+          end
         end
       end
 
@@ -122,48 +128,121 @@ raise "Stop Bus Comm"
       end
 
       def d4_display_order(msg_hash)
-        msg =  msg_hash[:msg]
-        d4_addr = msg.slice(7,2)
-        d4_module = @d4_modules[d4_addr]
-        if d4_module.nil?
-          msg_hash.merge!({:fields => {:d4_address => d4_addr,
-                                       :success    => false }
-                          })
-        else
-          d4_module.push_msg(msg)
-          msg_hash.merge!({:fields => {:d4_address => d4_module.address,
-                                       :success    => true }
-          })
+        unless self.idle?
+          msg =  msg_hash[:msg]
+          d4_addr = msg.slice(7,2)
+          d4_module = @d4_modules[d4_addr]
+          if d4_module.nil?
+            msg_hash.merge!({:fields => {:d4_address => d4_addr,
+                                         :success    => false }
+                            })
+          else
+            msg_hash.merge!({:fields => {:d4_address => d4_module.address,
+                                         :success    => true }
+            })
+            d4_module.push_msg(msg_hash)
+          end
+          self.ack
         end
-        self.ack
       end
 
       def format_d4_display_order(args=nil)
         return "'" if args.nil? or args.empty?
-        "%s%s" % [args[0][:d4_address], format_true_false(args[0][:success])]
+        if self.idle?
+          "%s%4.4d%s%X" % [args[0][:d4_address],
+                           args[0][:quantity],
+                           args[0][:infrared],
+                           args[0][:led_states]]
+        else
+          "%s%s" % [args[0][:d4_address], format_true_false(args[0][:success])]
+        end
       end
 
       def oc_display_text(msg_hash)
-        msg =  msg_hash[:msg]
-        oc_addr = msg.slice(7,2)
-        oc_module = @oc_modules[oc_addr]
-        if oc_module.nil?
-          msg_hash.merge!({:fields => {:success    => false }})
-        else
-          oc_module.push_msg(msg)
-          msg_hash.merge!({:fields => {:success    => true }})
+        unless self.idle?
+          msg =  msg_hash[:msg]
+          oc_addr = msg.slice(7,2)
+          oc_module = @oc_modules[oc_addr]
+          if oc_module.nil?
+            msg_hash.merge!({:fields => {:success    => false }})
+          else
+            msg_hash.merge!({:fields => {:success    => true }})
+            oc_module.push_msg(msg_hash)
+          end
+          self.ack
         end
-        self.ack
       end
 
       def format_oc_display_text(args=nil)
         return "'" if args.nil? or args.empty?
-        if args[0][:success]
-          ""
+        if self.idle?
+          "%s%X" % [args[0][:button_pressed],
+                    args[0][:oc_address]]
         else
-          "ER"
+          if args[0][:success]
+            ""
+          else
+            "ER"
+          end
         end
       end
+
+      def cancel_order(msg_hash)
+        msg =  msg_hash[:msg]
+        cancel_types = msg.slice(7,2)
+        oc_modules_to_cancel = []
+        d4_modules_to_cancel = []
+        lp_modules_to_cancel = []
+        field_hash = {}
+        field_hash.merge!({:success => true })
+        case cancel_types
+          when "00" then
+            field_hash.merge!({:cancel_type => '00'})
+            field_hash.merge!({:success => true })
+            oc_modules_to_cancel = self.oc_modules
+            d4_modules_to_cancel = self.d4_modules
+            lp_modules_to_cancel = self.lp_modules
+          when "OC" then
+            field_hash.merge!({:cancel_type => 'OC'})
+            oc_addresses = msg.slice(9..-3)
+            addresses = []
+            while (oc_addr = oc_addresses.slice!(0,2)) != ""
+              addresses << oc_addr
+              oc_module_to_cancel = self.oc_modules[oc_addr]
+              if oc_module_to_cancel.nil?
+                field_hash.merge!({:success => false})
+              else
+                oc_modules_to_cancel << oc_module_to_cancel
+              end
+            end
+            field_hash.merge!({:addresses => addresses})
+          else
+            device_addresses = msg.slice(7..-3)
+            addresses = []
+            while (addr = device_addresses.slice!(0,2)) != ""
+              addresses << addr
+              d4_module_to_cancel = self.d4_modules[addr]
+              d4_modules_to_cancel << d4_module_to_cancel unless d4_module_to_cancel.nil?
+              lp_module_to_cancel = self.lp_modules[addr]
+              lp_modules_to_cancel << lp_module_to_cancel unless lp_module_to_cancel.nil?
+            end
+            field_hash.merge!({:addresses => addresses})
+        end
+        msg_hash.merge!({:fields => field_hash})
+        oc_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }
+        d4_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }
+        lp_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }
+        self.ack
+      end
+
+      def format_cancel_order(args=nil)
+        return "'" if args.nil? or args.empty?
+        msg = ""
+        msg += args[0][:cancel_type] unless args[0][:cancel_type].nil?
+        args[0][:addresses].each { |addr| msg += addr} unless args[0][:addresses].nil?
+        msg
+      end
+
     end
   end
 end
