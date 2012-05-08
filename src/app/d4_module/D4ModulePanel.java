@@ -44,6 +44,7 @@ public class D4ModulePanel extends javax.swing.JPanel {
         setMinimumSize(new java.awt.Dimension(195, 80));
         setPreferredSize(new java.awt.Dimension(195, 80));
         setRequestFocusEnabled(false);
+        setSize(new java.awt.Dimension(195, 80));
 
         addButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         addButton.setAlignmentY(0.0F);
