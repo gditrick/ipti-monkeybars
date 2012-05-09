@@ -30,9 +30,9 @@ configuration do |c|
 	#c.source_exclude_filter = []
 
 	# Whether Ruby source files should be compiled into .class files
-	# default value: true
+	# default value: false
 	#
-	c.compile_ruby_files = false
+	#c.compile_ruby_files = true
 
 	# A list of individual Java library files to include.
 	# default value: []

@@ -3,6 +3,8 @@ class BayModuleController < ApplicationController
   set_view  'BayModuleView'
   set_close_action :close
 
+  attr_accessor :width, :height
+
   def load(*args)
     unless args.compact.empty?
       options = Hash[*args.flatten]
