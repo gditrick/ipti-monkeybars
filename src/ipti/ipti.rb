@@ -44,7 +44,10 @@ module IPTI
 
     def process_ack(controller, msg_hash)
       if @ack_handler
-        ack_msg = controller.send(@ack_handler, msg_hash)
+        data = controller.send(@ack_handler, msg_hash)
+        ack_msg = controller.address == 'EF' ?
+            controller.address + msg_hash[:code] + data + "\006" :
+            controller.address + msg_hash[:seq].to_s + ':' + msg_hash[:code] + data + "\006"
       else
         ack_msg = controller.address == 'EF' ?
           controller.address + msg_hash[:code] + "\006" :
@@ -52,8 +55,7 @@ module IPTI
       end
 
       ack_msg += IPTI::PickMaxProtocol.check_sum(ack_msg)
-pp "Msg: #{msg_hash[:msg]}"
-pp "Ack Msg: #{ack_msg}"
+
       msg_hash[:msg] == ack_msg
     end
 
@@ -193,10 +195,8 @@ pp "RECV IN -> #{self.address}:#{self.state_name}"
     end
 
     def process_ack(msg_hash)
-pp "Processing Ack "
       m_type = self.message_types[msg_hash[:code].to_sym]
       msg_hash.merge!({:type => m_type})
-pp "Processing Ack:  #{m_type.process_ack(self, msg_hash)}"
       self.processed_ack if m_type.process_ack(self, msg_hash)
     end
 

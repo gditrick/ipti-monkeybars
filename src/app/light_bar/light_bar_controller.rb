@@ -24,8 +24,8 @@ pp @__view.screen_size.height
       if bay.light_groupings.nil? or bay.light_groupings.empty?
         current_width  = 0
         current_height = 0
-        max_width      = 0  unless bay.devices.nil? or bay.devices.empty?
-        max_height     = 80 unless bay.devices.nil? or bay.devices.empty?
+        bay_max_width      = 0  unless bay.devices.nil? or bay.devices.empty?
+        bay_max_height     = 80 unless bay.devices.nil? or bay.devices.empty?
         bay.devices.each do |device|
           case device
             when OcModuleModel then width = 320; height = 80
@@ -34,18 +34,19 @@ pp @__view.screen_size.height
           end
           current_height = height if current_height == 0 or height > current_height
           if current_width + width + 2 > @__view.screen_size.width - 40
-            max_height += current_height + 2 if max_height + current_height + 2 < @__view.screen_size.height - 40
+            bay_max_height += current_height + 2 if bay_max_height + current_height + 2 < @__view.screen_size.height - 40
             current_width =  0
             current_height = height + 2
           end
           current_width += width + 2
-          max_width = current_width + 16 if current_width + 16 > max_width # add fudge factor for different OS
+          bay_max_width = current_width + 16 if current_width + 16 > bay_max_width # add fudge factor for different OS
         end
-        max_height += current_height if max_height + current_height < @__view.screen_size.height - 40
+        bay_max_height += current_height if bay_max_height + current_height < @__view.screen_size.height - 40
+        max_width  = bay_max_width  if max_width  < bay_max_width
+        max_height = bay_max_height if max_height < bay_max_height
       end
     end
     transfer[:preferred_width]  = max_width
     transfer[:preferred_height] = max_height
-pp transfer
   end
 end

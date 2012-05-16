@@ -18,7 +18,7 @@ class BayModuleView < ApplicationView
     @current_height = 0
     @max_width      = 0
     @max_height     = 0
-    @constraint =  Java::JavaAwt::GridBagConstraints.new
+    @constraint        = Java::JavaAwt::GridBagConstraints.new
     @constraint.anchor = Java::JavaAwt::GridBagConstraints::CENTER
     lights_panel.remove_all
   end
@@ -26,12 +26,13 @@ class BayModuleView < ApplicationView
   def on_first_update(model, transfer)
     transfer[:preferred_width] = @max_width
     transfer[:preferred_height] = @max_height
+    @main_view_component.update_ui
     super
   end
 
   def address_to_tab_title(attr)
     @main_view_component.parent.set_title_at(attr.to_i - 1, "Bay #{attr}")
-    attr
+    @main_view_component.parent.set_selected_index(@main_view_component.parent.tab_count - 1)
   end
 
   def tab_title_to_address(attr)

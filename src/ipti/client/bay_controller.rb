@@ -161,9 +161,6 @@ module IPTI
       end
 
       def format_d4_display_order(args=nil)
-pp "Format d4 display"
-pp args
-pp self.state_name
         return "'" if args.nil? or args.empty?
 
         case self.state_name
@@ -172,7 +169,7 @@ pp self.state_name
                              args[0][:quantity],
                              args[0][:infrared],
                              args[0][:led_states]]
-          when :waiting_for_ack then
+          when :ack_processing then
             "%s" % [args[0][:d4_address]]
           else
             "%s%s" % [args[0][:d4_address], format_true_false(args[0][:success])]
@@ -183,7 +180,7 @@ pp self.state_name
         msg = msg_hash[:msg]
         d4_addr = msg.slice(7,2)
         msg_hash.merge!({:fields => {:d4_address => d4_addr }})
-        format_d4_display_order(*(msg_hash[:fields]))
+        format_d4_display_order([msg_hash[:fields]])
       end
 
       def oc_display_text(msg_hash)
