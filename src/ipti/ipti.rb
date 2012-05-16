@@ -4,7 +4,7 @@ require 'pp'
 
 module IPTI
   class PickMaxMessageType
-    attr_accessor :type, :code, :response_handler, :formatter
+    attr_accessor :type, :code, :response_handler, :formatter, :ack_handler
 
     def initialize(type, *args)
       @type = type
@@ -15,6 +15,9 @@ module IPTI
         end
         if arg[:formatter]
           @formatter = arg[:formatter]
+        end
+        if arg[:ack_handler]
+          @ack_handler = arg[:ack_handler]
         end
       end
     end
@@ -40,11 +43,17 @@ module IPTI
     end
 
     def process_ack(controller, msg_hash)
-      ack_msg = controller.address == 'EF' ?
-        controller.address + msg_hash[:code] + "\006" :
-          controller.address + msg_hash[:seq].to_s + ':' + msg_hash[:code] + "\006"
+      if @ack_handler
+        ack_msg = controller.send(@ack_handler, msg_hash)
+      else
+        ack_msg = controller.address == 'EF' ?
+          controller.address + msg_hash[:code] + "\006" :
+            controller.address + msg_hash[:seq].to_s + ':' + msg_hash[:code] + "\006"
+      end
 
       ack_msg += IPTI::PickMaxProtocol.check_sum(ack_msg)
+pp "Msg: #{msg_hash[:msg]}"
+pp "Ack Msg: #{ack_msg}"
       msg_hash[:msg] == ack_msg
     end
 
@@ -83,7 +92,7 @@ module IPTI
       end
 
       event :wait_for_ack do
-        transition [:send_response, :idle] => :waiting_for_ack
+        transition all => :waiting_for_ack
       end
 
       event :processing_ack do
@@ -136,6 +145,7 @@ module IPTI
     def process_in_queue
       @in_queue_mutex.synchronize do
         unless @in_queue.empty?
+pp "RECV IN -> #{self.address}:#{self.state_name}"
           @in_queue.pop do |msg_hash|
             case self.state_name
               when :idle then
@@ -183,8 +193,10 @@ module IPTI
     end
 
     def process_ack(msg_hash)
+pp "Processing Ack "
       m_type = self.message_types[msg_hash[:code].to_sym]
       msg_hash.merge!({:type => m_type})
+pp "Processing Ack:  #{m_type.process_ack(self, msg_hash)}"
       self.processed_ack if m_type.process_ack(self, msg_hash)
     end
 

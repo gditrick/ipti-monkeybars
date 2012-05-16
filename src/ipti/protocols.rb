@@ -116,7 +116,7 @@ module IPTI
     end
 
     def send_data(data, controller, message_type=nil, *fields)
-pp "IN -> #{controller.address}:#{controller.state_name}"
+pp "SEND -> #{controller.address}:#{controller.state_name}"
       unless message_type.nil?
         data = message_type.message(controller, *fields)
       end

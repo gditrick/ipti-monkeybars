@@ -7,18 +7,32 @@ module IPTI
       attr_accessor :d4_modules, :lp_modules, :oc_modules
 
       message_type :heartbeat,           :code => "01"
-      message_type :verify_turn_all_on,  :code => "02", :response_handler => :verify_turn_on
-      message_type :verify_turn_all_off, :code => "03", :response_handler => :verify_turn_off
+      message_type :verify_turn_all_on,  :code => "02",
+                                         :response_handler => :verify_turn_on
+      message_type :verify_turn_all_off, :code => "03",
+                                         :response_handler => :verify_turn_off
       message_type :turn_one_on,         :code => "04"
       message_type :turn_one_off,        :code => "05"
       message_type :turn_all_on,         :code => "06"
       message_type :turn_all_off,        :code => "07"
-      message_type :cancel_order,        :code => "14", :response_handler => :cancel_order,     :formatter => :format_cancel_order
-      message_type :oc_display,          :code => "27", :response_handler => :oc_display_text,  :formatter => :format_oc_display_text
-      message_type :get_valid_oc,        :code => "30", :response_handler => :get_oc_modules,   :formatter => :format_oc_modules
-      message_type :d4_display,          :code => "33", :response_handler => :d4_display_order, :formatter => :format_d4_display_order
-      message_type :set_num_of_devices,  :code => "81", :response_handler => :get_modules,      :formatter => :format_modules
-      message_type :reset,               :code => "99", :response_handler => :reset
+      message_type :cancel_order,        :code => "14",
+                                         :response_handler => :cancel_order,
+                                         :formatter        => :format_cancel_order
+      message_type :oc_display,          :code => "27",
+                                         :response_handler => :oc_display_text,
+                                         :formatter        => :format_oc_display_text
+      message_type :get_valid_oc,        :code => "30",
+                                         :response_handler => :get_oc_modules,
+                                         :formatter        => :format_oc_modules
+      message_type :d4_display,          :code => "33",
+                                         :response_handler => :d4_display_order,
+                                         :formatter        => :format_d4_display_order,
+                                         :ack_handler      => :ack_d4_display_order
+      message_type :set_num_of_devices,  :code => "81",
+                                         :response_handler => :get_modules,
+                                         :formatter => :format_modules
+      message_type :reset,               :code => "99",
+                                         :response_handler => :reset
 
       def initialize(address, connection)
         super(address, connection)
@@ -147,15 +161,29 @@ module IPTI
       end
 
       def format_d4_display_order(args=nil)
+pp "Format d4 display"
+pp args
+pp self.state_name
         return "'" if args.nil? or args.empty?
-        if self.idle?
-          "%s%4.4d%s%X" % [args[0][:d4_address],
-                           args[0][:quantity],
-                           args[0][:infrared],
-                           args[0][:led_states]]
-        else
-          "%s%s" % [args[0][:d4_address], format_true_false(args[0][:success])]
+
+        case self.state_name
+          when :idle then
+            "%s%4.4d%s%X" % [args[0][:d4_address],
+                             args[0][:quantity],
+                             args[0][:infrared],
+                             args[0][:led_states]]
+          when :waiting_for_ack then
+            "%s" % [args[0][:d4_address]]
+          else
+            "%s%s" % [args[0][:d4_address], format_true_false(args[0][:success])]
         end
+      end
+
+      def ack_d4_display_order(msg_hash)
+        msg = msg_hash[:msg]
+        d4_addr = msg.slice(7,2)
+        msg_hash.merge!({:fields => {:d4_address => d4_addr }})
+        format_d4_display_order(*(msg_hash[:fields]))
       end
 
       def oc_display_text(msg_hash)
