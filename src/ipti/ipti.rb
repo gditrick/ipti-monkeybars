@@ -22,8 +22,9 @@ module IPTI
       end
     end
 
-    def message(controller, *fields)
-      if @formatter
+    def message(controller, seq=nil, *fields)
+
+    if @formatter
         data = fields.flatten.compact.empty? ? controller.send(@formatter) : controller.send(@formatter, fields)
       elsif fields.flatten.compact.empty?
         data = ''
@@ -31,7 +32,13 @@ module IPTI
         data = fields.flatten.compact.inject('') {|d,o| d += o }
       end
 
-      controller.seq.to_s == '' ? controller.address.to_s + @code.to_s + data : controller.address.to_s + controller.seq + @code.to_s + data
+pp "Controller State: #{controller.state_name}"
+      case controller.state_name
+        when :send_response then
+           controller.seq.to_s == '' ? controller.address.to_s + @code.to_s + data : controller.address.to_s + controller.seq + @code.to_s + data
+        else
+          seq.nil? ? controller.address.to_s + @code.to_s + data : controller.address.to_s + seq + ":" + @code.to_s + data
+      end
     end
 
     def process_message(controller, msg_hash)
@@ -60,10 +67,10 @@ module IPTI
     end
 
     def response(ctl, msg_hash)
-      if @response_handler
-        ctl.send(@response_handler, msg_hash)
-      else
-        ack_response(msg_hash[:msg])
+       if @response_handler
+         ctl.send(@response_handler, msg_hash)
+       else
+         ack_response(msg_hash[:msg])
       end
     end
 
@@ -175,9 +182,9 @@ pp "RECV IN -> #{self.address}:#{self.state_name}"
             @connection.push_out_msg({:data => msg_hash[:msg],
                                       :type => msg_hash[:type],
                                       :controller => self,
+                                      :seq => msg_hash[:seq],
                                       :fields => msg_hash[:fields]
             })
-            self.bump_seq unless self.waiting_for_ack?
           end
         end
       end

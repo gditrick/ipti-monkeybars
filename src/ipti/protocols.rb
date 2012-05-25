@@ -79,7 +79,7 @@ module IPTI
       @out_queue_mutex.synchronize do
         unless @out_queue.empty?
           @out_queue.pop do |msg_hash|
-            send_data(msg_hash[:data], msg_hash[:controller], msg_hash[:type], msg_hash[:fields])
+            send_data(msg_hash[:data], msg_hash[:controller], msg_hash[:seq], msg_hash[:type], msg_hash[:fields])
           end
         end
       end
@@ -115,11 +115,11 @@ module IPTI
       controller.push_in_msg({:code => code, :msg => msg, :seq => seq})
     end
 
-    def send_data(data, controller, message_type=nil, *fields)
+    def send_data(data, controller, seq=nil, message_type=nil, *fields)
 pp "SEND -> #{controller.address}:#{controller.state_name}"
-      unless message_type.nil?
-        data = message_type.message(controller, *fields)
-      end
+pp "message type:"
+pp message_type
+      data = message_type.nil? ? '' : message_type.message(controller, seq, *fields)
       data += "\006" if controller.state_name == :send_ack
       msg   = "\001"
       msg  += data
@@ -133,21 +133,6 @@ pp "SEND -> #{controller.address}:#{controller.state_name}"
       end
 pp "send: " + msg
       super msg
-    end
-
-  def check_queues
-      IPTI::Controller.instances.each do |key, controller|
-        unless controller.in_queue.empty?
-          if [:waiting, :waiting_for_reply].include?(controller.state_name)
-            controller.in_queue.pop{|m| process_msg(m)}
-          end
-        end
-        unless controller.out_queue.empty?
-          if controller.state_name == :waiting
-            controller.out_queue.pop{|q| send_data(*q)}
-          end
-        end
-      end
     end
 
     def self.check_sum(data)
