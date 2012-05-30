@@ -24,7 +24,7 @@ module IPTI
 
     def message(controller, seq=nil, *fields)
 
-    if @formatter
+      if @formatter
         data = fields.flatten.compact.empty? ? controller.send(@formatter) : controller.send(@formatter, fields)
       elsif fields.flatten.compact.empty?
         data = ''
@@ -37,7 +37,19 @@ pp "Controller State: #{controller.state_name}"
         when :send_response then
            controller.seq.to_s == '' ? controller.address.to_s + @code.to_s + data : controller.address.to_s + controller.seq + @code.to_s + data
         else
-          seq.nil? ? controller.address.to_s + @code.to_s + data : controller.address.to_s + seq + ":" + @code.to_s + data
+          if seq.nil?
+            if controller.seq == ''
+              controller.address.to_s + @code.to_s + data
+            else
+              controller.address.to_s + controller.seq + @code.to_s + data
+            end
+          else
+            if controller.seq == ''
+               controller.address.to_s + @code.to_s + data
+            else
+              controller.address.to_s + seq + ":" + @code.to_s + data
+            end
+          end
       end
     end
 

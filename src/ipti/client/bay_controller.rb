@@ -98,12 +98,8 @@ module IPTI
 
       def reset(msg_hash)
         msg = msg_hash[:msg]
-pp "Bay Reset:"
-pp msg_hash
         reset_msg =  self.message_types[:reset].message(self, msg_hash[:seq])
         reset_msg += IPTI::PickMaxProtocol.check_sum(reset_msg)
-pp reset_msg
-pp "Bay Reset: #{msg == reset_msg}"
         if msg == reset_msg
           @seq = 0
         end
