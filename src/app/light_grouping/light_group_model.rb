@@ -1,6 +1,7 @@
 class LightGroupModel < AbstractModel
   attr_accessor :controller_klass,
-                :rows
+                :rows,
+                :width
 
   def initialize
     @rows            = []

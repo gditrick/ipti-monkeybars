@@ -10,7 +10,8 @@ class BayModuleModel < AbstractModel
                 :main_oc,
                 :number_of_4d,
                 :number_of_lp,
-                :type_sym
+                :type_sym,
+                :width
 
   def initialize(addr="01")
     @address          = addr

@@ -25,17 +25,22 @@ public class LightRowPanel extends javax.swing.JPanel {
 	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        light_group_panel = new javax.swing.JPanel();
+        light_row_panel = new javax.swing.JPanel();
 
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
+        setLayout(new java.awt.GridBagLayout());
 
-        light_group_panel.setBackground(new java.awt.Color(0, 0, 0));
-        light_group_panel.setForeground(new java.awt.Color(255, 255, 255));
-        light_group_panel.setLayout(new java.awt.GridBagLayout());
-        add(light_group_panel);
+        light_row_panel.setBackground(new java.awt.Color(0, 0, 0));
+        light_row_panel.setForeground(new java.awt.Color(255, 255, 255));
+        light_row_panel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        add(light_row_panel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel light_group_panel;
+    private javax.swing.JPanel light_row_panel;
     // End of variables declaration//GEN-END:variables
 }

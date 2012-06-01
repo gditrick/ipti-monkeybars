@@ -26,15 +26,20 @@ public class LightGroupPanel extends javax.swing.JPanel
 	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         light_group_panel = new javax.swing.JPanel();
 
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
+        setLayout(new java.awt.GridBagLayout());
 
         light_group_panel.setBackground(new java.awt.Color(0, 0, 0));
         light_group_panel.setForeground(new java.awt.Color(255, 255, 255));
         light_group_panel.setLayout(new java.awt.GridBagLayout());
-        add(light_group_panel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        add(light_group_panel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel light_group_panel;

@@ -12,11 +12,13 @@ class LightRowController < ApplicationController
       end
     end
     @controllers ||= []
-    model.rows.each do |row|
-      c =  eval("#{row.controller_klass}.create_instance")
+    model.devices.each do |device|
+      c =  eval("#{device.controller_klass}.create_instance")
       @controllers << c
-      add_nested_controller(:light_row.type_sym, c)
-      c.open(:model => row)
+      device.controller = c
+      add_nested_controller(device.type_sym, c)
+      c.open(:model => device)
     end
+    model.width = transfer[:width]
   end
 end

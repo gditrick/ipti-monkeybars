@@ -12,11 +12,15 @@ class LightGroupController < ApplicationController
       end
     end
     @controllers ||= []
+    @max_width = 0
     model.rows.each do |row|
       c =  eval("#{row.controller_klass}.create_instance")
       @controllers << c
-      add_nested_controller(:light_row.type_sym, c)
+      add_nested_controller(:light_row, c)
       c.open(:model => row)
+      @max_width = row.width > @max_width ? row.width : @max_width
     end
+    model.width = @max_width
+    transfer[:width]  = @max_width
   end
 end

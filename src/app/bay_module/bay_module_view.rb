@@ -8,8 +8,8 @@ class BayModuleView < ApplicationView
   map  :model => :address, :view => "bay_address.text", :using => [:address_to_tab_title, :tab_title_to_address]
 
   nest :sub_view => :light_group, :using => [:add_light_group, :remove_light_group]
-  nest :sub_view => :oc,          :using => [:add_oc, :remove_oc]
-  nest :sub_view => :d4,          :using => [:add_d4, :remove_d4]
+  nest :sub_view => :oc,        :using => [:add_oc, :remove_oc]
+  nest :sub_view => :d4,        :using => [:add_d4, :remove_d4]
 
   def load
     @current_x_pos  = 0
@@ -40,7 +40,11 @@ class BayModuleView < ApplicationView
   end
 
   def add_light_group(nested_view, nested_component, model, transfer)
-
+pp transfer
+    @constraint.anchor = Java::JavaAwt::GridBagConstraints::LINE_START
+    @constraint.gridx  = @current_x_pos
+    lights_panel.add(nested_component, @constraint)
+    @current_x_pos += 1
   end
 
   def remove_light_group(nested_view, nested_component, model, transfer)

@@ -23,12 +23,16 @@ class BayModuleController < ApplicationController
         c.open(:model => device)
       end
     else
+      max_width = 0
       model.light_groupings.each do |group|
         c =  eval("#{group.controller_klass}.create_instance")
         @controllers << c
+#        add_nested_controller(:light_row, c)
         add_nested_controller(:light_group, c)
         c.open(:model => group)
+        max_width = group.width > max_width ? group.width : max_width
       end
+      model.width = max_width
     end
   end
 end

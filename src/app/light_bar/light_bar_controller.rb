@@ -13,8 +13,8 @@ class LightBarController < ApplicationController
         update_model(model, *model.attributes)
       end
     end
-pp @__view.screen_size.width
-pp @__view.screen_size.height
+#pp @__view.screen_size.width
+#pp @__view.screen_size.height
     @controllers ||= []
     model.bays.each do |bay|
       c =  eval("#{bay.controller_klass}.create_instance")
@@ -44,6 +44,8 @@ pp @__view.screen_size.height
         bay_max_height += current_height if bay_max_height + current_height < @__view.screen_size.height - 40
         max_width  = bay_max_width  if max_width  < bay_max_width
         max_height = bay_max_height if max_height < bay_max_height
+      else
+        max_width = bay.width > max_width ? bay.width : max_width
       end
     end
     transfer[:preferred_width]  = max_width
