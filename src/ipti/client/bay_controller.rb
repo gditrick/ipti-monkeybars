@@ -109,7 +109,8 @@ module IPTI
 
       def get_oc_modules(msg_hash)
         msg_hash.merge!({:fields => {:main_oc_present => (not @main_oc.nil?),
-                                     :oc_addresses    => @oc_list.map(&:address)
+                                     :oc_addresses    => @oc_list.map(&:address),
+                                     :ack             => true
                                     }
         })
         self.ack
@@ -125,7 +126,8 @@ module IPTI
         msg_hash.merge!({:fields => {:number_of_d4     => @d4_list.size,
                                      :number_of_lp     => @lp_list.size,
                                      :starting_d4_addr => @d4_starting_addr,
-                                     :starting_lp_addr => @lp_starting_addr
+                                     :starting_lp_addr => @lp_starting_addr,
+                                     :ack              => true
                                     }
         })
         self.ack
@@ -148,11 +150,15 @@ module IPTI
           d4_module = @d4_modules[d4_addr]
           if d4_module.nil?
             msg_hash.merge!({:fields => {:d4_address => d4_addr,
-                                         :success    => false }
-                            })
+                                         :success    => false,
+                                         :ack        => true
+                                        }
+            })
           else
             msg_hash.merge!({:fields => {:d4_address => d4_module.address,
-                                         :success    => true }
+                                         :success    => true,
+                                         :ack        => true
+                                        }
             })
             d4_module.push_msg(msg_hash)
           end
@@ -189,9 +195,9 @@ module IPTI
           oc_addr = msg.slice(7,2)
           oc_module = @oc_modules[oc_addr]
           if oc_module.nil?
-            msg_hash.merge!({:fields => {:success    => false }})
+            msg_hash.merge!({:fields => {:success    => false, :ack => true }})
           else
-            msg_hash.merge!({:fields => {:success    => true }})
+            msg_hash.merge!({:fields => {:success    => true, :ack => true }})
             oc_module.push_msg(msg_hash)
           end
           self.ack
@@ -253,6 +259,7 @@ module IPTI
             end
             field_hash.merge!({:addresses => addresses})
         end
+        field_hash.merge!({:ackl => true})
         msg_hash.merge!({:fields => field_hash})
         oc_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }
         d4_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }

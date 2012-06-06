@@ -4,7 +4,9 @@ require 'pp'
 
 module IPTI
   module PickMaxProtocol
-    attr_reader :data_received, :in_queue, :out_queue, :port, :ip, :app
+    attr_reader :data_received, :port, :ip, :app,
+                :in_queue, :out_queue,
+                :processing_in, :processing_out
 
     def initialize(app)
       @app = app
@@ -65,8 +67,17 @@ module IPTI
       @in_queue_mutex  = Mutex.new
       @out_queue       = EM::Queue.new
       @out_queue_mutex = Mutex.new
+      @processing_in, @processing_out = false, false
       @in_timer        = EM::PeriodicTimer.new(0.01) { process_in_queue }
       @out_timer       = EM::PeriodicTimer.new(0.01) { process_out_queue }
+    end
+
+    def processing_in?
+      @processing_in
+    end
+
+    def processing_out?
+      @processing__out
     end
 
     def push_out_msg(msg_hash)
@@ -77,18 +88,26 @@ module IPTI
 
     def process_out_queue
       @out_queue_mutex.synchronize do
-        unless @out_queue.empty?
-          @out_queue.pop do |msg_hash|
-            send_data(msg_hash[:data], msg_hash[:controller], msg_hash[:seq], msg_hash[:type], msg_hash[:fields])
+        unless processing_out?
+          @processing_out = true
+          until @out_queue.empty? do
+            @out_queue.pop do |msg_hash|
+              send_data(msg_hash[:data], msg_hash[:controller], msg_hash[:seq], msg_hash[:type], msg_hash[:fields])
+            end
           end
+          @processing_out = false
         end
       end
     end
 
     def process_in_queue
       @in_queue_mutex.synchronize do
-        unless @in_queue.empty?
-          @in_queue.pop{|msg| process_message(msg)}
+        unless processing_in?
+          @processing_in = true
+          until @in_queue.empty? do
+            @in_queue.pop{|msg| process_message(msg)}
+          end
+          @processing_in = false
         end
       end
     end
@@ -119,17 +138,23 @@ module IPTI
 pp "SEND -> #{controller.address}:#{controller.state_name}"
 pp "message type:"
 pp message_type
+pp fields
+      ack = fields[0].nil? ? nil : fields[0][:ack].nil? ? nil : "\006"
       data = message_type.nil? ? '' : message_type.message(controller, seq, *fields)
-      data += "\006" if controller.state_name == :send_ack
+      data += ack unless ack.nil?
       msg   = "\001"
       msg  += data
       msg  += IPTI::PickMaxProtocol.check_sum(data)
       msg  += "\003"
-      case controller.state_name
-        when :idle then
-          controller.wait_for_ack
-        else
-          controller.processed_request
+      if controller.has_saved_state?
+        controller.recover_state
+      else
+        case controller.state_name
+          when :idle then
+            controller.wait_for_ack
+          else
+            controller.processed_request
+        end
       end
 pp "send: " + msg
       super msg

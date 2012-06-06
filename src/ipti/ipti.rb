@@ -23,7 +23,6 @@ module IPTI
     end
 
     def message(controller, seq=nil, *fields)
-
       if @formatter
         data = fields.flatten.compact.empty? ? controller.send(@formatter) : controller.send(@formatter, fields)
       elsif fields.flatten.compact.empty?
@@ -94,11 +93,19 @@ pp "Controller State: #{controller.state_name}"
   class Controller
     include EventMachine::Deferrable
 
-    attr_accessor :instances, :address, :connection, :seq, :message, :out_queue, :in_queue
+    attr_accessor :instances, :address, :connection, :seq, :message,
+                  :out_queue, :in_queue, :processing_out, :processing_in,
+                  :state_mutex
 
     state_machine :state, :initial => :no_comm do
       after_transition [:idle] => :no_comm, :do => :disconnection
       after_transition :no_comm => :idle, :do => :connect_comm
+
+      around_transition do |ctl, transition, block|
+        ctl.state_mutex.synchronize do
+          block.call
+        end
+      end
 
       event :connect do
         transition :no_comm => :idle
@@ -109,7 +116,7 @@ pp "Controller State: #{controller.state_name}"
       end
 
       event :ack do
-        transition [:send_response, :idle] => :send_ack
+        transition all => :send_ack
       end
 
       event :wait_for_ack do
@@ -117,7 +124,7 @@ pp "Controller State: #{controller.state_name}"
       end
 
       event :processing_ack do
-        transition :waiting_for_ack => :ack_processing
+        transition all => :ack_processing
       end
 
       event :processed_ack do
@@ -125,7 +132,7 @@ pp "Controller State: #{controller.state_name}"
       end
 
       event :processing_request do
-        transition :idle => :send_response
+        transition all => :send_response
       end
 
       event :processed_request do
@@ -147,14 +154,43 @@ pp "Controller State: #{controller.state_name}"
     end
 
     def initialize(address, connection=nil)
-      @seq        = ""
-      @address    = address
-      @connection = connection
+      @seq            = ""
+      @address        = address
+      @connection     = connection
+      @processing_in, @processing_out = false, false
+      @state_mutex    = Mutex.new
       super()
       Controller.instances[Controller.key(address, connection)] = self
     end
 
     def bump_seq
+    end
+
+    def save_current_state
+pp ">>>> Save Current State <<<<"
+      @state_mutex.synchronize do
+        @save_state = self.state
+      end
+    end
+
+    def recover_state
+pp ">>>> Recover State <<<<"
+      @state_mutex.synchronize do
+        self.state = @save_state unless @save_state.nil?
+        @save_state = nil
+      end
+    end
+
+    def has_saved_state?
+      @save_state != nil
+    end
+
+    def processing_in?
+      @processing_in
+    end
+
+    def processing_out?
+      @processing_out
     end
 
     def push_in_msg(msg_hash)
@@ -165,19 +201,39 @@ pp "Controller State: #{controller.state_name}"
 
     def process_in_queue
       @in_queue_mutex.synchronize do
-        unless @in_queue.empty?
+        unless processing_in?
+          @processing_in = true
+          until @in_queue.empty? do
 pp "RECV IN -> #{self.address}:#{self.state_name}"
-          @in_queue.pop do |msg_hash|
-            case self.state_name
-              when :idle then
-                self.processing_request
-                process_message(msg_hash)
-              when :waiting_for_ack then
-                self.processing_ack
-                process_ack(msg_hash)
+            @in_queue.pop do |msg_hash|
+              case self.state_name
+                when :idle then
+                  unless is_ack_message?(msg_hash[:msg])
+                    self.processing_request
+                    process_message(msg_hash)
+                  else
+                    save_current_state
+                    self.processing_ack
+                    process_ack(msg_hash)
+                  end
+                when :waiting_for_ack then
+pp "is ack? #{is_ack_message?(msg_hash[:msg])}"
+                  if is_ack_message?(msg_hash[:msg])
+                    self.processing_ack
+                    process_ack(msg_hash)
+                  else
+                    save_current_state
+                    self.processing_request
+                    process_message(msg_hash)
+                  end
+                else
+                  @in_queue.push msg_hash
+                  break
+              end
             end
-          end
-        end if self.idle? or self.waiting_for_ack?
+          end if self.idle? or self.waiting_for_ack?
+          @processing_in = false
+        end
       end
     end
 
@@ -189,15 +245,19 @@ pp "RECV IN -> #{self.address}:#{self.state_name}"
 
     def process_out_queue
       @out_queue_mutex.synchronize do
-        unless @out_queue.empty?
-          @out_queue.pop do |msg_hash|
-            @connection.push_out_msg({:data => msg_hash[:msg],
-                                      :type => msg_hash[:type],
-                                      :controller => self,
-                                      :seq => msg_hash[:seq],
-                                      :fields => msg_hash[:fields]
-            })
+        unless processing_out?
+          @processing_out = true
+          until @out_queue.empty? do
+            @out_queue.pop do |msg_hash|
+              @connection.push_out_msg({:data => msg_hash[:msg],
+                                        :type => msg_hash[:type],
+                                        :controller => self,
+                                        :seq => msg_hash[:seq],
+                                        :fields => msg_hash[:fields]
+              })
+            end
           end
+          @processing_out = false
         end
       end
     end
@@ -223,17 +283,21 @@ pp "RECV IN -> #{self.address}:#{self.state_name}"
       self.is_a?(IptiInterfaceController)
     end
 
+    def is_ack_message?(msg)
+      (msg =~ /\006/) == nil ? false : true
+    end
+
+    def format_true_false(arg=nil)
+      return "0'" if arg.nil?
+      arg == true ? "1" : "0"
+    end
+
     def self.message_type(type, opts = {}, &block)
       @message_types ||= {}
       m_type = IPTI::PickMaxMessageType.new(type, opts, &block)
       @message_types[type.to_sym]        = m_type
       @message_types[m_type.code.to_sym] = m_type
       define_attr_method(:message_types, @message_types)
-    end
-
-    def format_true_false(arg=nil)
-      return "0'" if arg.nil?
-      arg == true ? "1" : "0"
     end
 
     def self.define_attr_method(name, value)
