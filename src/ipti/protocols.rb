@@ -25,10 +25,11 @@ pp " msg received: " + msg
         @in_queue_mutex.synchronize do
           @in_queue.push msg
         end
-        EM::schedule { process_in_queue }
-        @data_received.delete!("\001" + msg + "\003")
+        @data_received.slice!("\001" + msg + "\003")
         @data_received.lstrip!
+pp "remaining data: " + @data_received
       end
+      EM::schedule { process_in_queue }
     end
 
     def connection_completed
@@ -87,7 +88,6 @@ pp "Connection closed to server" if @app.connected?
         until @in_queue.empty? do
           @in_queue.pop{|msg| process_message(msg)}
         end
-        @processing_in = false
       end
     end
 
