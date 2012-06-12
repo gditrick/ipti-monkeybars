@@ -66,8 +66,6 @@ module IPTI
         @out_queue       = EventMachine::Queue.new
         @in_queue_mutex  = Mutex.new
         @out_queue_mutex = Mutex.new
-        @in_timer        = EM::PeriodicTimer.new(0.01) { process_in_queue }
-        @out_timer       = EM::PeriodicTimer.new(0.01) { process_out_queue }
         @bay_bus         = CommunicationBus.new
         @bus_timer       = EM::PeriodicTimer.new(0.01) { process_comm_bus }
         @d4_list.each{|a| a.bus = @bay_bus }
@@ -80,147 +78,138 @@ module IPTI
         unless bus_msg.nil?
           m_type = self.message_types[bus_msg.code]
           unless m_type.nil?
-            self.bump_seq
-            @connection.push_out_msg({:data => '', :controller => self, :type => m_type, :fields => bus_msg.fields})
+            message = IPTI::PickMaxMessage.new(self, m_type, @seq)
+            message.fields = bus_msg.fields
+            message.sequence = @seq
+            message.response_required=true
+            @connection.push_out_msg(message)
           else
             raise "Message Request #{bus_msg.code} not implemented"
           end
         end
       end
 
-      def seq
-        ("%2.2d" % @seq).slice(-2,2) + ":"
-      end
-
       def bump_seq
-        @seq = @seq >= 100 ?  0 : @seq + 1
+        @seq = @seq + 1 >= 100 ?  0 : @seq + 1
       end
 
-      def reset(msg_hash)
-        msg = msg_hash[:msg]
-        reset_msg =  self.message_types[:reset].message(self, msg_hash[:seq])
-        reset_msg += IPTI::PickMaxProtocol.check_sum(reset_msg)
-        if msg == reset_msg
-          @seq = 0
+      def reset(message)
+        msg = IPTI::PickMaxMessage.new(self, self.message_types[:reset], @seq, message.bytes)
+        msg.sequence = message.sequence
+        if msg.format == message.bytes
+          @seq = 99
         end
-        self.wait_for_ack
+        msg = IPTI::PickMaxMessage.new(self, self.message_types[:reset], @seq, message.bytes)
+        msg.sequence = @seq
+        msg.response_required = true
         msg
       end
 
-      def get_oc_modules(msg_hash)
-        msg_hash.merge!({:fields => {:main_oc_present => (not @main_oc.nil?),
-                                     :oc_addresses    => @oc_list.map(&:address),
-                                     :ack             => true
-                                    }
-        })
-        self.ack
+      def get_oc_modules(message)
+        oc_msg = IPTI::PickMaxMessage.new(self, self.message_types[:get_valid_oc])
+        oc_msg.fields[:main_oc_present] = (not @main_oc.nil?)
+        oc_msg.fields[:oc_addresses]    = @oc_list.map(&:address)
+        oc_msg.fields[:ack]             = true
+        oc_msg.sequence = message.sequence
+        oc_msg
       end
 
-      def format_oc_modules(args=nil)
-        return "'" if args.nil? or args.empty?
-        msg = format_true_false(args[0][:main_oc_present])
-        args[0][:oc_addresses].inject(msg) {|m,o| m += o }
+      def format_oc_modules(args={})
+        return "'" if args.empty?
+        msg = format_true_false(args[:main_oc_present])
+        args[:oc_addresses].inject(msg) {|m,o| m += o }
       end
 
-      def get_modules(msg_hash)
-        msg_hash.merge!({:fields => {:number_of_d4     => @d4_list.size,
-                                     :number_of_lp     => @lp_list.size,
-                                     :starting_d4_addr => @d4_starting_addr,
-                                     :starting_lp_addr => @lp_starting_addr,
-                                     :ack              => true
-                                    }
-        })
-        self.ack
+      def get_modules(message)
+        modules_msg = IPTI::PickMaxMessage.new(self, self.message_types[:set_num_of_devices])
+        modules_msg.fields[:number_of_d4]     = @d4_list.size
+        modules_msg.fields[:number_of_lp]     = @lp_list.size
+        modules_msg.fields[:starting_d4_addr] = @d4_starting_addr
+        modules_msg.fields[:starting_lp_addr] = @lp_starting_addr
+        modules_msg.fields[:ack]             = true
+        modules_msg.sequence = message.sequence
+        modules_msg
       end
 
-      def format_modules(args=nil)
-        return "'" if args.nil? or args.empty?
-        '%-2.2d%-2.2d%s%s' % [args[0][:number_of_d4],
-                              args[0][:number_of_lp],
-                              args[0][:starting_d4_addr],
-                              args[0][:starting_lp_addr]
+      def format_modules(args={})
+        return "'" if args.empty?
+        '%-2.2d%-2.2d%s%s' % [args[:number_of_d4],
+                              args[:number_of_lp],
+                              args[:starting_d4_addr],
+                              args[:starting_lp_addr]
         ]
-
       end
 
-      def d4_display_order(msg_hash)
-        unless self.idle?
-          msg =  msg_hash[:msg]
-          d4_addr = msg.slice(7,2)
+      def d4_display_order(message)
+        d4_msg = IPTI::PickMaxMessage.new(self, self.message_types[:d4_display])
+        if message.bytes.size > 11
+          d4_addr = message.bytes.slice(7,2)
           d4_module = @d4_modules[d4_addr]
+          d4_msg.fields[:d4_address] = d4_addr
           if d4_module.nil?
-            msg_hash.merge!({:fields => {:d4_address => d4_addr,
-                                         :success    => false,
-                                         :ack        => true
-                                        }
-            })
+            d4_msg.fields[:success] = false
           else
-            msg_hash.merge!({:fields => {:d4_address => d4_module.address,
-                                         :success    => true,
-                                         :ack        => true
-                                        }
-            })
-            d4_module.push_msg(msg_hash)
+            d4_module.push_msg(message)
+            d4_msg.fields[:success] = true
           end
-          self.ack
+          d4_msg.fields[:ack] = true
+          d4_msg.sequence = message.sequence
+        end
+        d4_msg
+      end
+
+      def format_d4_display_order(args={})
+        return "'" if args.empty?
+        if args.has_key?(:success) and args.has_key?(:ack)
+          "%s%s" % [args[:d4_address], format_true_false(args[:success])]
+        elsif args.has_key?(:quantity) and args.has_key?(:led_states)
+          "%s%4.4d%s%X" % [args[:d4_address],
+                           args[:quantity],
+                           args[:infrared],
+                           args[:led_states]]
+        else
+          "%s" % [args[:d4_address]]
         end
       end
 
-      def format_d4_display_order(args=nil)
-        return "'" if args.nil? or args.empty?
-
-        case self.state_name
-          when :idle then
-            "%s%4.4d%s%X" % [args[0][:d4_address],
-                             args[0][:quantity],
-                             args[0][:infrared],
-                             args[0][:led_states]]
-          when :ack_processing then
-            "%s" % [args[0][:d4_address]]
-          else
-            "%s%s" % [args[0][:d4_address], format_true_false(args[0][:success])]
-        end
+      def ack_d4_display_order(message)
+        d4_msg = IPTI::PickMaxMessage.new(self, self.message_types[:d4_display], message.sequence, message.bytes)
+        d4_addr = d4_msg.bytes.slice(7,2)
+        d4_msg.fields[:d4_address] = d4_addr
+        d4_msg.fields[:ack] = true
+        d4_msg.format
       end
 
-      def ack_d4_display_order(msg_hash)
-        msg = msg_hash[:msg]
-        d4_addr = msg.slice(7,2)
-        msg_hash.merge!({:fields => {:d4_address => d4_addr }})
-        format_d4_display_order([msg_hash[:fields]])
-      end
-
-      def oc_display_text(msg_hash)
-        unless self.idle?
-          msg =  msg_hash[:msg]
-          oc_addr = msg.slice(7,2)
+      def oc_display_text(message)
+        oc_msg = IPTI::PickMaxMessage.new(self, self.message_types[:oc_display])
+        if message.bytes.size > 10
+          oc_addr = message.bytes.slice(7,2)
           oc_module = @oc_modules[oc_addr]
           if oc_module.nil?
-            msg_hash.merge!({:fields => {:success    => false, :ack => true }})
+            oc_msg.fields[:success] = false
           else
-            msg_hash.merge!({:fields => {:success    => true, :ack => true }})
-            oc_module.push_msg(msg_hash)
+            oc_msg.fields[:success] = true
+            oc_module.push_msg(message)
           end
-          self.ack
+          oc_msg.fields[:ack] = true
+          oc_msg.sequence = message.sequence
         end
+        oc_msg
       end
 
-      def format_oc_display_text(args=nil)
-        return "'" if args.nil? or args.empty?
-        if self.idle?
-          "%s%X" % [args[0][:button_pressed],
-                    args[0][:oc_address]]
+      def format_oc_display_text(args={})
+        return "'" if args.empty?
+        if args.has_key?(:success)
+          args[:success] ? "" : "ER"
         else
-          if args[0][:success]
-            ""
-          else
-            "ER"
-          end
+          "%s%X" % [args[:button_pressed],
+                    args[:oc_address]]
         end
       end
 
-      def cancel_order(msg_hash)
-        msg =  msg_hash[:msg]
-        cancel_types = msg.slice(7,2)
+      def cancel_order(message)
+        cancel_msg = IPTI::PickMaxMessage.new(self, self.message_types[:cancel_order])
+        cancel_types = message.bytes.slice(7,2)
         oc_modules_to_cancel = []
         d4_modules_to_cancel = []
         lp_modules_to_cancel = []
@@ -235,7 +224,7 @@ module IPTI
             lp_modules_to_cancel = self.lp_modules
           when "OC" then
             field_hash.merge!({:cancel_type => 'OC'})
-            oc_addresses = msg.slice(9..-3)
+            oc_addresses = message.bytes.slice(9..-3)
             addresses = []
             while (oc_addr = oc_addresses.slice!(0,2)) != ""
               addresses << oc_addr
@@ -248,7 +237,7 @@ module IPTI
             end
             field_hash.merge!({:addresses => addresses})
           else
-            device_addresses = msg.slice(7..-3)
+            device_addresses = message.bytes.slice(7..-3)
             addresses = []
             while (addr = device_addresses.slice!(0,2)) != ""
               addresses << addr
@@ -259,22 +248,22 @@ module IPTI
             end
             field_hash.merge!({:addresses => addresses})
         end
-        field_hash.merge!({:ackl => true})
-        msg_hash.merge!({:fields => field_hash})
-        oc_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }
-        d4_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }
-        lp_modules_to_cancel.each{ |a| a.push_msg(msg_hash) }
-        self.ack
+        oc_modules_to_cancel.each{ |a| a.push_msg(message) }
+        d4_modules_to_cancel.each{ |a| a.push_msg(message) }
+        lp_modules_to_cancel.each{ |a| a.push_msg(message) }
+        field_hash.merge!({:ack => true})
+        cancel_msg.fields = field_hash
+        cancel_msg.sequence = message.sequence
+        cancel_msg
       end
 
-      def format_cancel_order(args=nil)
-        return "'" if args.nil? or args.empty?
+      def format_cancel_order(args={})
+        return "'" if args.empty?
         msg = ""
-        msg += args[0][:cancel_type] unless args[0][:cancel_type].nil?
-        args[0][:addresses].each { |addr| msg += addr} unless args[0][:addresses].nil?
+        msg += args[:cancel_type] unless args[:cancel_type].nil?
+        args[:addresses].each { |addr| msg += addr} unless args[:addresses].nil?
         msg
       end
-
     end
   end
 end

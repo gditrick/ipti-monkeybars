@@ -21,72 +21,104 @@ module IPTI
         end
       end
     end
+  end
 
-    def message(controller, seq=nil, *fields)
-      if @formatter
-        data = fields.flatten.compact.empty? ? controller.send(@formatter) : controller.send(@formatter, fields)
-      elsif fields.flatten.compact.empty?
+  class PickMaxMessage
+    attr_accessor :controller, :message_type, :bytes, :track, :sequence, :fields, :response_required
+
+    def initialize(controller, message_type, track=nil, bytes=nil)
+      @controller        = controller
+      @message_type      = message_type
+      @response_required = false
+      @track             = track
+      @bytes             = bytes
+      @fields            = {}
+    end
+
+    def response_required?
+      @response_required
+    end
+
+    def process_message
+      if @message_type.response_handler
+        @controller.send(@message_type.response_handler, self)
+      else
+        process_ack
+      end
+    end
+
+    def process_ack
+      if @message_type.ack_handler
+        ack_msg = @controller.send(@message_type.ack_handler, self)
+      else
+        ack_msg = @controller.address == 'EF' ?
+            @controller.address + @message_type.code + "\006" :
+            @controller.address + ("%2.2d" % @sequence) + ':' + @message_type.code + "\006"
+        ack_msg += IPTI::PickMaxProtocol.check_sum(ack_msg)
+      end
+
+      @bytes == ack_msg
+    end
+
+    def response
+      if @message_type.response_handler
+        @controller.send(@message_type.response_handler, self)
+      else
+        ack_response
+      end
+    end
+
+    def format
+      if @message_type.formatter
+        data = @fields.empty? ?
+            @controller.send(@message_type.formatter) :
+            controller.send(@message_type.formatter, @fields)
+      elsif @fields.empty?
         data = ''
       else
-        data = fields.flatten.compact.inject('') {|d,o| d += o }
+        data = @fields.inject('') {|d,(k,v)| d += v }
       end
 
-pp "Controller State: #{controller.state_name}"
-      case controller.state_name
-        when :send_response then
-           controller.seq.to_s == '' ? controller.address.to_s + @code.to_s + data : controller.address.to_s + controller.seq + @code.to_s + data
-        else
-          if seq.nil?
-            if controller.seq == ''
-              controller.address.to_s + @code.to_s + data
-            else
-              controller.address.to_s + controller.seq + @code.to_s + data
-            end
-          else
-            if controller.seq == ''
-               controller.address.to_s + @code.to_s + data
-            else
-              controller.address.to_s + seq + ":" + @code.to_s + data
-            end
-          end
-      end
+      ack = (@fields.empty? or @fields[:ack].nil?) ? '' :
+          @fields[:ack] ? "\006" : ''
+
+      data += ack
+
+      msg = @controller.address == 'EF' ?
+          @controller.address + @message_type.code + data :
+          @controller.address + ("%2.2d" % @sequence) + ':' + @message_type.code + data
+
+      msg += IPTI::PickMaxProtocol.check_sum(msg)
+      msg
     end
 
-    def process_message(controller, msg_hash)
-      if @response_handler
-        controller.send(@response_handler, msg_hash)
-      else
-        process_ack(controller, msg_hash)
-      end
+    def is_ack?
+      return false if @bytes.nil?
+      (@bytes =~ /\006/) == nil ? false : true
     end
 
-    def process_ack(controller, msg_hash)
-      if @ack_handler
-        data = controller.send(@ack_handler, msg_hash)
-        ack_msg = controller.address == 'EF' ?
-            controller.address + msg_hash[:code] + data + "\006" :
-            controller.address + msg_hash[:seq].to_s + ':' + msg_hash[:code] + data + "\006"
-      else
-        ack_msg = controller.address == 'EF' ?
-          controller.address + msg_hash[:code] + "\006" :
-            controller.address + msg_hash[:seq].to_s + ':' + msg_hash[:code] + "\006"
-      end
+    def ack_response
+      (@bytes =~ /:/).nil? ?
+          @bytes.slice(0,2) + @message_type.code.to_s + "\006" :
+          @bytes.slice(0,5) + @message_type.code.to_s + "\006"
+    end
+  end
 
-      ack_msg += IPTI::PickMaxProtocol.check_sum(ack_msg)
+  class ResponseTracker
+    attr_accessor :controller, :message
 
-      msg_hash[:msg] == ack_msg
+    def initialize(controller, message)
+       @controller = controller
+       @message    = message
     end
 
-    def response(ctl, msg_hash)
-       if @response_handler
-         ctl.send(@response_handler, msg_hash)
-       else
-         ack_response(msg_hash[:msg])
-      end
+    def run
+      @timer = EM::Timer.new(1) { @controller.connection.send_data(@message)}
     end
 
-    def ack_response(msg)
-      (msg =~ /:/).nil? ? msg.slice(0,2) + @code.to_s + "\006" : msg.slice(0,5) + @code.to_s + "\006"
+    def cancel
+      @timer.cancel
+      @controller.response_received
     end
   end
 
@@ -112,31 +144,15 @@ pp "Controller State: #{controller.state_name}"
       end
 
       event :disconnect do
-        transition [:idle, :send_response] => :no_comm
+        transition [:idle, :waiting_for_response] => :no_comm
       end
 
-      event :ack do
-        transition all => :send_ack
+      event :wait_for_response do
+        transition :idle => :waiting_for_response
       end
 
-      event :wait_for_ack do
-        transition all => :waiting_for_ack
-      end
-
-      event :processing_ack do
-        transition all => :ack_processing
-      end
-
-      event :processed_ack do
-        transition :ack_processing => :idle
-      end
-
-      event :processing_request do
-        transition all => :send_response
-      end
-
-      event :processed_request do
-        transition [:send_response, :send_ack] => :idle
+      event :response_received do
+        transition :waiting_for_response => :idle
       end
     end
 
@@ -154,11 +170,12 @@ pp "Controller State: #{controller.state_name}"
     end
 
     def initialize(address, connection=nil)
-      @seq            = ""
-      @address        = address
-      @connection     = connection
-      @processing_in, @processing_out = false, false
-      @state_mutex    = Mutex.new
+      @seq             = ""
+      @address         = address
+      @connection      = connection
+      @state_mutex     = Mutex.new
+      @in_queue_mutex  = Mutex.new
+      @out_queue_mutex = Mutex.new
       super()
       Controller.instances[Controller.key(address, connection)] = self
     end
@@ -166,125 +183,68 @@ pp "Controller State: #{controller.state_name}"
     def bump_seq
     end
 
-    def save_current_state
-pp ">>>> Save Current State <<<<"
-      @state_mutex.synchronize do
-        @save_state = self.state
-      end
-    end
 
-    def recover_state
-pp ">>>> Recover State <<<<"
-      @state_mutex.synchronize do
-        self.state = @save_state unless @save_state.nil?
-        @save_state = nil
-      end
-    end
-
-    def has_saved_state?
-      @save_state != nil
-    end
-
-    def processing_in?
-      @processing_in
-    end
-
-    def processing_out?
-      @processing_out
-    end
-
-    def push_in_msg(msg_hash)
-      @in_queue_mutex.synchronize do
-        @in_queue.push msg_hash
+    def push_in_msg(message)
+      unless @in_queue.nil?
+        @in_queue_mutex.synchronize do
+          @in_queue.push message
+        end
+        EM::schedule { process_in_queue }
       end
     end
 
     def process_in_queue
-      @in_queue_mutex.synchronize do
-        unless processing_in?
-          @processing_in = true
+      unless @in_queue.nil?
+        @in_queue_mutex.synchronize do
           until @in_queue.empty? do
-pp "RECV IN -> #{self.address}:#{self.state_name}"
-            @in_queue.pop do |msg_hash|
-              case self.state_name
-                when :idle then
-                  unless is_ack_message?(msg_hash[:msg])
-                    self.processing_request
-                    process_message(msg_hash)
-                  else
-                    save_current_state
-                    self.processing_ack
-                    process_ack(msg_hash)
-                  end
-                when :waiting_for_ack then
-pp "is ack? #{is_ack_message?(msg_hash[:msg])}"
-                  if is_ack_message?(msg_hash[:msg])
-                    self.processing_ack
-                    process_ack(msg_hash)
-                  else
-                    save_current_state
-                    self.processing_request
-                    process_message(msg_hash)
-                  end
+            @in_queue.pop do |message|
+              if self.waiting_for_response?
+                if message.track == @response_tracker.message.track
+                  bump_seq
+                  @response_tracker.cancel
+                  process_response(message)
                 else
-                  @in_queue.push msg_hash
-                  break
+                  process_message(message)
+                end
+              elsif self.idle?
+                process_message(message)
+              else
+                raise "Controller: #{self.address} in a bad state: #{self.state_name}"
               end
             end
-          end if self.idle? or self.waiting_for_ack?
-          @processing_in = false
+          end
         end
       end
     end
 
-    def push_out_msg(msg, type, msg_hash)
+    def push_out_msg(message)
       @out_queue_mutex.synchronize do
-        @out_queue.push({:msg => msg, :type => type, :seq => @seq}.merge(msg_hash))
+        @out_queue.push(message)
       end
+      EM::schedule { process_out_queue }
     end
 
     def process_out_queue
       @out_queue_mutex.synchronize do
-        unless processing_out?
-          @processing_out = true
-          until @out_queue.empty? do
-            @out_queue.pop do |msg_hash|
-              @connection.push_out_msg({:data => msg_hash[:msg],
-                                        :type => msg_hash[:type],
-                                        :controller => self,
-                                        :seq => msg_hash[:seq],
-                                        :fields => msg_hash[:fields]
-              })
-            end
+        until @out_queue.empty? do
+          @out_queue.pop do |message|
+            @connection.push_out_msg(message)
           end
-          @processing_out = false
         end
       end
     end
 
-    def process_message(msg_hash)
-      m_type = self.message_types[msg_hash[:code].to_sym]
-      if m_type.nil?
-        raise "Message Type #{msg_hash[:code]} not implemented"
+    def process_message(message)
+      response = message.response
+      push_out_msg(response) unless response.nil?
+    end
+
+    def process_response(message)
+      if message.is_ack?
+        message.process_ack
       else
-        msg_hash.merge!({:type => m_type})
-        response_msg = m_type.response(self, msg_hash)
-        push_out_msg(response_msg, m_type, msg_hash)
+        message.process_message
       end
-    end
-
-    def process_ack(msg_hash)
-      m_type = self.message_types[msg_hash[:code].to_sym]
-      msg_hash.merge!({:type => m_type})
-      self.processed_ack if m_type.process_ack(self, msg_hash)
-    end
-
-    def is_a_ipti_interface_controller?
-      self.is_a?(IptiInterfaceController)
-    end
-
-    def is_ack_message?(msg)
-      (msg =~ /\006/) == nil ? false : true
     end
 
     def format_true_false(arg=nil)
@@ -304,6 +264,12 @@ pp "is ack? #{is_ack_message?(msg_hash[:msg])}"
       send :define_method, name do
         value
       end
+    end
+
+    def track_response(message)
+      @response_tracker = IPTI::ResponseTracker.new(self, message)
+      @response_tracker.run
+      self.wait_for_response
     end
   end
 end

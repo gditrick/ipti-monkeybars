@@ -12,7 +12,7 @@ module IPTI
 
       def initialize(address, connection=nil)
         @version     = "PM-Simulate-0.0.1"
-        @bay_polling = "false"
+        @bay_polling = true
         super
         InterfaceController.instances[IPTI::Controller.key(address, connection)] = self
       end
@@ -20,10 +20,6 @@ module IPTI
       def connect_comm
         @in_queue   = EventMachine::Queue.new
         @out_queue  = EventMachine::Queue.new
-        @in_queue_mutex  = Mutex.new
-        @out_queue_mutex = Mutex.new
-        @in_timer        = EM::PeriodicTimer.new(0.01) { process_in_queue }
-        @out_timer       = EM::PeriodicTimer.new(0.01) { process_out_queue }
         @bay_controllers = []
         @number_of_bays  = @connection.app.light_bar.bays.size
         @starting_bay_number = @connection.app.light_bar.bays[0].address
@@ -35,74 +31,71 @@ module IPTI
       end
 
       def disconnection
-        @in_queue  = nil
-        @out_queue = nil
-        @in_timer.cancel
-        @in_timer  = nil
-        @out_timer.cancel
-        @out_timer = nil
+        @in_queue_mutex.synchronize do
+          @in_queue  = nil
+        end
+        @out_queue_mutex.synchronize do
+          @out_queue = nil
+        end
       end
 
-      def get_set_number_of_bays(msg_hash)
-        msg = msg_hash[:msg]
-        if msg.size > 6    #keep this part to show the set part although server is not sending a set as of now
-          self.number_of_bays      = msg.slice(4,2).to_i
-          self.starting_bay_number = msg.slice(6,2).to_i
+      def get_set_number_of_bays(message)
+        bays_msg = IPTI::PickMaxMessage.new(self, self.message_types[:set_bays])
+        if message.bytes.size > 6    #keep this part to show the set part although server is not sending a set as of now
+          self.number_of_bays      = bytes.slice(4,2).to_i
+          self.starting_bay_number = bytes.slice(6,2).to_i
           @bay_controllers ||= []
           (self.starting_bay_number...(self.number_of_bays + self.number_of_bays)).each do |bay_addr|
             bay_controller = IPTI::Client::BayController.new("%2.2d" % bay_addr, self.connection)
             @bay_controllers << bay_controller
           end
         else
-          msg_hash.merge!({:fields => {:number_of_bays => self.number_of_bays,
-                                       :starting_bay_number => self.starting_bay_number,
-                                       :ack => true}
-                          })
-          self.ack
+          bays_msg.fields[:number_of_bays] = self.number_of_bays
+          bays_msg.fields[:starting_bay_number] = self.starting_bay_number
         end
+        bays_msg.fields[:ack] = true
+        bays_msg
       end
 
-      def format_number_bays(args=nil)
-        return '' if args.nil?
-        "%-2.2d%-2.2d" % [ args[0][:number_of_bays], args[0][:starting_bay_number]]
+      def format_number_bays(args={})
+        return '' if args.empty?
+        return '' if args[:number_of_bays].nil? or args[:starting_bay_number].nil?
+        "%-2.2d%-2.2d" % [args[:number_of_bays], args[:starting_bay_number]]
       end
 
-      def get_set_bay_polling(msg_hash)
-        msg = msg_hash[:msg]
-        if msg.size > 6
-          self.bay_polling = msg.slice(4,1) == "1" ? true : false
-          msg_hash.merge!({:fields => {:ack => true}})
-          bay_polling_msg = self.message_types[:set_polling].message(self, nil, {:ack => true})
+      def get_set_bay_polling(message)
+        if message.bytes.size > 6
+          bay_polling_msg = IPTI::PickMaxMessage.new(self, self.message_types[:set_polling])
+          self.bay_polling = message.bytes.slice(4,1) == "1" ? true : false
+          bay_polling_msg.fields[:ack] = true
         else
-          msg_hash.merge!({:fields => {:bay_polling => self.bay_polling, :ack => true}})
-          bay_polling_msg = self.message_types[:set_polling].message(self, nil, msg_hash[:fields])
+          bay_polling_msg = IPTI::PickMaxMessage.new(self, self.message_types[:set_polling])
+          bay_polling_msg.fields[:bay_polling] = self.bay_polling
+          bay_polling_msg.fields[:ack] = true
         end
-        self.ack
         bay_polling_msg
       end
 
-      def format_bay_polling(args=nil)
-        return '' if args.nil?
-        return '' if args[0][:bay_polling].nil?
-        format_true_false(args[0][:bay_polling])
+      def format_bay_polling(args={})
+        return '' if args.empty?
+        return '' if args[:bay_polling].nil?
+        format_true_false(args[:bay_polling])
       end
 
-      def get_version(msg_hash)
-pp "Get version"
-pp msg_hash
-        version_msg = self.message_types[:version].message(self)
-        msg_hash.merge!({:fields => {:ack => true}})
-        self.ack
+      def get_version(message)
+        version_msg = IPTI::PickMaxMessage.new(self, self.message_types[:version])
+        version_msg.fields[:version] = self.version
+        version_msg.fields[:ack] = true
         version_msg
       end
 
-      def format_version(args=nil)
-        self.version
+      def format_version(args={})
+        return '' if args.empty?
+        args[:version]
       end
 
-      def reset(msg)
-        reset_msg =  self.message_types[:reset].message(self)
-        reset_msg
+      def reset(message)
+        IPTI::PickMaxMessage.new(self, self.message_types[:reset])
       end
     end
   end

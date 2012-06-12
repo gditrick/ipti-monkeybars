@@ -33,27 +33,27 @@ class OcModuleModel < AbstractModel
     @bus       = comm_bus
     @in_mutex  = Mutex.new
     @in_queue  = EM::Queue.new
-    @in_timer  = EM::PeriodicTimer.new(0.01) { process_in_queue }
   end
 
   def push_msg(msg)
     @in_mutex.synchronize do
       @in_queue.push msg
     end
+    EM::schedule { process_in_queue }
   end
 
   def process_in_queue
     @in_mutex.synchronize do
       unless @in_queue.empty?
-        @in_queue.pop do |msg_hash|
-          case msg_hash[:type].type
+        @in_queue.pop do |message|
+          case message.message_type.type
             when :oc_display then
-              display_text(msg_hash[:msg])
+              display_text(message.bytes)
               @controller.activate_module(self)
             when :cancel_order
               @controller.cancel
             else
-              raise "Unknown OC Message Type #{msg_hash[:type]}"
+              raise "Unknown OC Message Type #{message.message_type.type}"
           end
         end
       end
