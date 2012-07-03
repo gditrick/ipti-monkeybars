@@ -28,6 +28,10 @@ module IPTI
                                          :response_handler => :d4_display_order,
                                          :formatter        => :format_d4_display_order,
                                          :ack_handler      => :ack_d4_display_order
+      message_type :d4_menu,             :code => "34",
+                                         :response_handler => :d4_display_menu,
+                                         :formatter        => :format_d4_display_menu,
+                                         :ack_handler      => :ack_d4_display_menu
       message_type :set_num_of_devices,  :code => "81",
                                          :response_handler => :get_modules,
                                          :formatter => :format_modules
@@ -174,6 +178,44 @@ module IPTI
 
       def ack_d4_display_order(message)
         d4_msg = IPTI::PickMaxMessage.new(self, self.message_types[:d4_display], message.sequence, message.bytes)
+        d4_addr = d4_msg.bytes.slice(7,2)
+        d4_msg.fields[:d4_address] = d4_addr
+        d4_msg.fields[:ack] = true
+        d4_msg.format
+      end
+
+      def d4_display_menu(message)
+        d4_msg = IPTI::PickMaxMessage.new(self, self.message_types[:d4_menu])
+        if message.bytes.size > 11
+          d4_addr = message.bytes.slice(7,2)
+          d4_module = @d4_modules[d4_addr]
+          d4_msg.fields[:d4_address] = d4_addr
+          if d4_module.nil?
+            d4_msg.fields[:success] = false
+          else
+            d4_module.push_msg(message)
+            d4_msg.fields[:success] = true
+          end
+          d4_msg.fields[:ack] = true
+          d4_msg.sequence = message.sequence
+        end
+        d4_msg
+      end
+
+      def format_d4_display_menu(args={})
+        return "'" if args.empty?
+        if args.has_key?(:success) and args.has_key?(:ack)
+          "%s%s" % [args[:d4_address], format_true_false(args[:success])]
+        elsif args.has_key?(:index)
+          "%s%1.1d" % [args[:d4_address],
+                           args[:index]]
+        else
+          ""
+        end
+      end
+
+      def ack_d4_display_menu(message)
+        d4_msg = IPTI::PickMaxMessage.new(self, self.message_types[:d4_menu], message.sequence, message.bytes)
         d4_addr = d4_msg.bytes.slice(7,2)
         d4_msg.fields[:d4_address] = d4_addr
         d4_msg.fields[:ack] = true

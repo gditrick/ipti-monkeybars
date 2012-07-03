@@ -46,26 +46,12 @@ class D4ModuleController < ApplicationController
   end
 
   def led_button_action_performed
-    bus_msg = IPTI::Client::BusMessage.new
-    bus_msg.code = :d4_display
-    fields = {}
-    fields[:d4_address] = model.address
-    case model.display_items[model.current_display_index]
-      when "rCAL" then
-        fields[:quantity] = -1
-        fields[:infrared] = "000"
-        fields[:led_states] = light_states
-      when "cLOS" then
-      when "LO  " then
-      when "InFO" then
-      when "SCrP" then
+    case model.state
+      when :order then order_led_action
+      when :menu  then menu_led_action
       else
-        fields[:quantity]   = model.display_items[model.current_display_index].to_i
-        fields[:infrared]   = "000"
-        fields[:led_states] = light_states
+        raise "D4 Module Model in unknown state: #{model.state}"
     end
-    bus_msg.fields = fields
-    model.bus.push_bus_msg(bus_msg)
     deactivate_module
     update_view
   end
@@ -74,6 +60,9 @@ class D4ModuleController < ApplicationController
     model.current_display_index -= 1
     model.current_display_index = model.current_display_index % model.display_items.size
     model.digits     = model.display_items[model.current_display_index]
+    if model.state == :menu
+      update_led_states(model.display_led_states[model.current_display_index])
+    end
     update_view
   end
 
@@ -81,6 +70,9 @@ class D4ModuleController < ApplicationController
     model.current_display_index += 1
     model.current_display_index = model.current_display_index % model.display_items.size
     model.digits     = model.display_items[model.current_display_index]
+    if model.state == :menu
+      update_led_states(model.display_led_states[model.current_display_index])
+    end
     update_view
   end
 
@@ -118,6 +110,7 @@ class D4ModuleController < ApplicationController
     model.slow_blinkers    = []
     model.fast_blink_count = 0
     model.slow_blink_count = 0
+    model.state            = :idle
   end
 
   def light_states
@@ -133,5 +126,100 @@ class D4ModuleController < ApplicationController
       when :on then led_states |= 12
     end
     led_states
+  end
+
+  def order_led_action
+    bus_msg = IPTI::Client::BusMessage.new
+    bus_msg.code = :d4_display
+    fields = {}
+    fields[:d4_address] = model.address
+    case model.display_items[model.current_display_index]
+      when "rCAL" then
+        fields[:quantity] = -1
+        fields[:infrared] = "000"
+        fields[:led_states] = light_states
+      when "cLOS" then
+      when "LO  " then
+      when "InFO" then
+      when "SCrP" then
+      else
+        fields[:quantity]   = model.display_items[model.current_display_index].to_i
+        fields[:infrared]   = "000"
+        fields[:led_states] = light_states
+    end
+    bus_msg.fields = fields
+    model.bus.push_bus_msg(bus_msg)
+  end
+
+  def menu_led_action
+    bus_msg = IPTI::Client::BusMessage.new
+    bus_msg.code = :d4_menu
+    fields = {}
+    fields[:d4_address] = model.address
+    fields[:index]      = model.current_display_index + 1
+    bus_msg.fields = fields
+    model.bus.push_bus_msg(bus_msg)
+  end
+
+  def update_led_states(led_char)
+    @timer_mutex.synchronize do
+      @timers.each(&:cancel) unless @timers.nil?
+      @timers = []
+    end
+
+    model.fast_blinkers = []
+    model.slow_blinkers = []
+
+    model.fast_blink_count = 0
+    model.slow_blink_count = 0
+
+    model.blink = false
+
+    model.up_arrow_state   = :off
+    model.down_arrow_state = :off
+
+
+    led_states    = led_char.hex
+    if led_states & 1 == 1
+      model.p_arrow_state = :fast
+      if led_states & 2 == 2
+        model.up_arrow_state = :on
+      else
+        model.fast_blinkers << :up
+      end
+    elsif led_states & 2 == 2
+      model.up_arrow_state = :slow
+      model.slow_blinkers << :up
+    end
+
+    if led_states & 4 == 4
+      model.down_arrow_state = :fast
+      if led_states & 8 == 8
+        model.down_arrow_state = :on
+      else
+        model.fast_blinkers << :down
+      end
+    elsif led_states & 8 == 8
+      model.down_arrow_state = :slow
+      model.slow_blinkers << :down
+    end
+
+    model.blink = true unless model.slow_blinkers.empty? and model.fast_blinkers.empty?
+
+    model.up_arrow_color   = :bright_red   unless model.up_arrow_state == :off
+    model.down_arrow_color = :bright_green unless model.down_arrow_state == :off
+
+    @timer_mutex.synchronize do
+      if model.blink?
+        timer = EM::PeriodicTimer.new(0.200) do
+          model.fast_blink_count = blink(model, model.fast_blink_count, model.fast_blinkers)
+        end unless model.fast_blinkers.empty?
+        @timers << timer unless model.fast_blinkers.empty?
+        timer = EM::PeriodicTimer.new(0.500) do
+          model.slow_blink_count = blink(model, model.slow_blink_count, model.slow_blinkers)
+        end unless model.slow_blinkers.empty?
+        @timers << timer unless model.slow_blinkers.empty?
+      end
+    end
   end
 end

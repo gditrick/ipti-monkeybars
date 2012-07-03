@@ -28,6 +28,7 @@ public class LightGroupPanel extends javax.swing.JPanel
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         light_group_panel = new javax.swing.JPanel();
 
         setLayout(new java.awt.GridBagLayout());
@@ -42,6 +43,7 @@ public class LightGroupPanel extends javax.swing.JPanel
         add(light_group_panel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel light_group_panel;
     // End of variables declaration//GEN-END:variables
 }

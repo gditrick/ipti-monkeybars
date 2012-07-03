@@ -17,12 +17,14 @@ class D4ModuleModel < AbstractModel
                 :led_colors,
                 :led_state,
                 :display_items,
+                :display_led_states,
                 :current_display_index,
                 :quantity,
                 :recall,
                 :shorting,
                 :slow_blinkers,
                 :slow_blink_count,
+                :state,
                 :sub_state,
                 :type_sym,
                 :up_arrow_color,
@@ -35,6 +37,7 @@ class D4ModuleModel < AbstractModel
     @led_state        = :off
     @add_state        = :off
     @sub_state        = :off
+    @state            = :idle
     @type_sym         = :d4
   end
 
@@ -59,6 +62,8 @@ class D4ModuleModel < AbstractModel
             when :d4_display then
               display_order(message.bytes)
               @controller.activate_module(self)
+            when :d4_menu then
+              @controller.activate_module(self) if display_menu(message.bytes)
             when :cancel_order
               @controller.cancel
             else
@@ -84,6 +89,8 @@ class D4ModuleModel < AbstractModel
     infrared_flag = msg.slice(20,1)
     flash_mask    = msg.slice(21,1)
 
+    @state         = :order
+
     @fast_blinkers = []
     @slow_blinkers = []
 
@@ -93,6 +100,9 @@ class D4ModuleModel < AbstractModel
     @display_items = []
     @led_colors    = [:bright_red, :light_gray]
     @blink         = false
+
+    @up_arrow_color   = :light_gray
+    @down_arrow_color = :light_gray
 
     @quantity = qty.to_i
     @digits   = qty
@@ -196,5 +206,82 @@ class D4ModuleModel < AbstractModel
 
     @current_display_index = 0
     @digits                = @display_items[@current_display_index]
+  end
+
+  def display_menu(msg)
+pp "Display Menu"
+pp msg
+    @state         = :menu
+
+    @display_items = []
+    @display_led_states = []
+    @led_colors    = [:bright_red, :light_gray]
+
+    @fast_blinkers = []
+    @slow_blinkers = []
+
+    @fast_blink_count = 0
+    @slow_blink_count = 0
+
+    msg.slice(9..-3).scan(/.{5}/).each do |menu_item|
+pp menu_item
+      @display_items << menu_item.slice(0,4)
+      @display_led_states << menu_item.slice(-1,1)
+    end
+
+    return false if @display_items.empty?
+
+pp "Menu Items:"
+pp @display_items
+pp "Led States:"
+pp @display_led_states
+
+    @led_state        = :on
+    @led_color        = :bright_red
+    @add_state        = :on
+    @sub_state        = :on
+    @up_arrow_color   = :light_gray
+    @down_arrow_color = :light_gray
+
+    @current_display_index = 0
+    @digits                = @display_items[@current_display_index]
+
+    @up_arrow_state   = :off
+    @down_arrow_state = :off
+
+    led_states = @display_led_states[@current_display_index].hex
+
+    if led_states & 1 == 1
+      @up_arrow_state = :fast
+      if led_states & 2 == 2
+        @up_arrow_state = :on
+      else
+        @fast_blinkers << :up
+      end
+    elsif led_states & 2 == 2
+      @up_arrow_state = :slow
+      @slow_blinkers << :up
+    end
+
+    if led_states & 4 == 4
+      @down_arrow_state = :fast
+      if led_states & 8 == 8
+        @down_arrow_state = :on
+      else
+        @fast_blinkers << :down
+      end
+    elsif led_states & 8 == 8
+      @down_arrow_state = :slow
+      @slow_blinkers << :down
+    end
+
+    @slow_blinkers << :led unless @slow_blinkers.empty? or @fast_blinkers.size > 0
+    @fast_blinkers << :led if @slow_blinkers.empty? and @fast_blinkers.size > 0
+
+    @blink = true unless @slow_blinkers.empty? and @fast_blinkers.empty?
+
+    @up_arrow_color   = :bright_red unless @up_arrow_state == :off
+    @down_arrow_color = :bright_green unless @down_arrow_state == :off
+    true
   end
 end
