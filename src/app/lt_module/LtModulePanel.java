@@ -40,6 +40,7 @@ public class LtModulePanel extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(320, 80));
         setMinimumSize(new java.awt.Dimension(320, 80));
         setPreferredSize(new java.awt.Dimension(320, 80));
+        setSize(new java.awt.Dimension(320, 80));
         setVerifyInputWhenFocusTarget(false);
 
         displayText.setBackground(java.awt.Color.darkGray);
