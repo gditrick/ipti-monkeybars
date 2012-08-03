@@ -20,7 +20,6 @@ class LightGroupController < ApplicationController
       add_nested_controller(:light_row, c)
       c.open(:model => row)
       @max_width = row.width > @max_width ? row.width : @max_width
-      pp "Row Height = #{row.height}"
       model.height += row.height
     end
     model.height     += 4
