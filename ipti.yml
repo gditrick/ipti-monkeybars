@@ -182,19 +182,20 @@ configuration: !ruby/object:IptiConfiguration
               - !ruby/object:LightRowModel
                 controller_klass: LightRowController
                 devices:
-                  - *id009
-                  - *id010
-                  - *id011
-                  - *id012
-                  - *id013
                   - *id014
+                  - *id013
+                  - *id012
+                  - *id011
+                  - *id010
+                  - *id009
         lp_starting_address: 01
         main_oc: *id012
         number_of_4d: 05
         number_of_lp: 0
         type_sym: !ruby/sym bay
     height: 100
-    remote_host_ip: 192.168.1.31
+#    remote_host_ip: 192.168.1.31  # hellboy (greg's laptop)
+    remote_host_ip: 192.168.1.4 # robin
     remote_host_port: 2000
-    width: 900
+#    width: 900
 

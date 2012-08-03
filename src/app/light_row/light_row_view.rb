@@ -10,6 +10,7 @@ class LightRowView < ApplicationView
   def load
     @current_x_pos     = 0
     @width             = 0
+    @height            = 0
     @constraint        = Java::JavaAwt::GridBagConstraints.new
     @constraint.gridy  = 0
     @constraint.anchor = Java::JavaAwt::GridBagConstraints::LINE_START
@@ -18,7 +19,8 @@ class LightRowView < ApplicationView
 
   def on_first_update(model, transfer)
     transfer[:width] = @width
-    @main_view_component.set_size(transfer[:width], 80)
+    transfer[:height] = @height
+    @main_view_component.set_size(transfer[:width], transfer[:height])
     super
   end
 
@@ -50,7 +52,9 @@ class LightRowView < ApplicationView
     @constraint.gridx = @current_x_pos
     light_row_panel.add(nested_component, @constraint)
     @current_x_pos += 1
-    @width += nested_view.width
+    @width += nested_view.width + 2
+    @height = nested_view.height + 2 > @height ? nested_view.height + 2 : @height
     transfer[:width] = @width
+    transfer[:height] = @height
   end
 end

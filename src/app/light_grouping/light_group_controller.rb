@@ -13,14 +13,19 @@ class LightGroupController < ApplicationController
     end
     @controllers ||= []
     @max_width = 0
+    model.height = 0
     model.rows.each do |row|
       c =  eval("#{row.controller_klass}.create_instance")
       @controllers << c
       add_nested_controller(:light_row, c)
       c.open(:model => row)
       @max_width = row.width > @max_width ? row.width : @max_width
+      pp "Row Height = #{row.height}"
+      model.height += row.height
     end
-    model.width = @max_width
-    transfer[:width]  = @max_width
+    model.height     += 4
+    model.width       = @max_width + APP_WIDTH_FUDGE
+    transfer[:width]  = model.width
+    transfer[:height] = model.height
   end
 end

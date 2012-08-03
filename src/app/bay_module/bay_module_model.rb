@@ -4,6 +4,7 @@ class BayModuleModel < AbstractModel
                 :controller_klass,
                 :d4_starting_address,
                 :devices,
+                :height,
                 :index,
                 :light_groupings,
                 :lp_starting_address,

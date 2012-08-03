@@ -41,7 +41,6 @@ class BayModuleView < ApplicationView
   end
 
   def add_light_group(nested_view, nested_component, model, transfer)
-pp transfer
     @constraint.anchor = Java::JavaAwt::GridBagConstraints::LINE_START
     @constraint.gridx  = @current_x_pos
     lights_panel.add(nested_component, @constraint)
@@ -92,7 +91,7 @@ pp transfer
     @constraint.gridy = @current_y_pos
     lights_panel.add(nested_component, @constraint)
     @current_x_pos += @constraint.gridwidth
-    @current_width += nested_view.width
+    @current_width += nested_view.width + 2
     @max_width = @current_width if @current_width >= @max_width
   end
 end

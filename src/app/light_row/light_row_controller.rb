@@ -20,5 +20,6 @@ class LightRowController < ApplicationController
       c.open(:model => device)
     end
     model.width = transfer[:width]
+    model.height = transfer[:height]
   end
 end

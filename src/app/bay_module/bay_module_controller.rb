@@ -3,8 +3,6 @@ class BayModuleController < ApplicationController
   set_view  'BayModuleView'
   set_close_action :close
 
-  attr_accessor :width, :height
-
   def load(*args)
     unless args.compact.empty?
       options = Hash[*args.flatten]
@@ -24,6 +22,7 @@ class BayModuleController < ApplicationController
       end
     else
       max_width = 0
+      height = 0
       model.light_groupings.each do |group|
         c =  eval("#{group.controller_klass}.create_instance")
         @controllers << c
@@ -31,7 +30,9 @@ class BayModuleController < ApplicationController
         add_nested_controller(:light_group, c)
         c.open(:model => group)
         max_width = group.width > max_width ? group.width : max_width
+        height   += group.height
       end
+      model.height = height + APP_HEIGHT_FUDGE
       model.width = max_width
     end
   end
