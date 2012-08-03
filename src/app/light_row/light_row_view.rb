@@ -5,6 +5,7 @@ class LightRowView < ApplicationView
 
   nest :sub_view => :oc,          :using => [:add_oc, :remove_oc]
   nest :sub_view => :d4,          :using => [:add_d4, :remove_d4]
+  nest :sub_view => :lt,          :using => [:add_lt, :remove_lt]
 
   def load
     @current_x_pos     = 0
@@ -34,6 +35,14 @@ class LightRowView < ApplicationView
   end
 
   def remove_d4(nested_view, nested_component, model, transfer)
+    light_row_panel.remove nested_component
+  end
+
+  def add_lt(nested_view, nested_component, model, transfer)
+    add_device(nested_view, nested_component, model, transfer)
+  end
+
+  def remove_lt(nested_view, nested_component, model, transfer)
     light_row_panel.remove nested_component
   end
 

@@ -88,8 +88,6 @@ class OcModuleController < ApplicationController
 
   private
 
-  private
-
   def blink(model, blink_count, blinkers)
     blinkers.each do |b|
       case b

@@ -104,8 +104,13 @@ class D4ModuleModel < AbstractModel
     @up_arrow_color   = :light_gray
     @down_arrow_color = :light_gray
 
-    @quantity = qty.to_i
-    @digits   = qty
+    if qty == "    "
+      @quantity = nil
+      @digits   = text
+    else
+      @quantity = qty.to_i
+      @digits   = qty
+    end
 
     @up_arrow_state   = :off
     @down_arrow_state = :off
@@ -168,44 +173,47 @@ class D4ModuleModel < AbstractModel
         @display_items << "%4d" % 0
       when :over_pick
         (0..@quantity).reverse_each{|a| @display_items << "%-4.4d" % a}
-    end
+    end unless @quantity.nil?
 
     if @recall
       @display_items << "rCAL"
-    end
+    end unless @quantity.nil?
 
     @ext_functions = []
     if ext_function & 1 == 1
       @ext_functions << :close_box
       @display_items << "cLOS"
-    end
+    end unless @quantity.nil?
     if ext_function & 2 == 2
       @ext_functions << :stock_low
       @display_items << "LO  "
-    end
+    end unless @quantity.nil?
     if ext_function & 4 == 4
       @ext_functions << :info_request
       @display_items << "InFO"
-    end
+    end unless @quantity.nil?
     if ext_function & 8 == 8
       @ext_functions << :scrap
       @display_items << "SCrP"
-    end
+    end unless @quantity.nil?
 
     if @shorting == :over_pick
       (9999...@quantity).each{|a| @display_items << "%-4.4d" % a}
-    end
+    end unless @quantity.nil?
 
     @led_state        = :on
     @led_color        = :bright_red
-    @add_state        = :on
-    @sub_state        = :on
+
+    unless @quantity.nil?
+      @add_state        = :on
+      @sub_state        = :on
+
+      @current_display_index = 0
+      @digits                = @display_items[@current_display_index]
+    end
 
     @up_arrow_color   = :bright_red unless @up_arrow_state == :off
     @down_arrow_color = :bright_green unless @down_arrow_state == :off
-
-    @current_display_index = 0
-    @digits                = @display_items[@current_display_index]
   end
 
   def display_menu(msg)

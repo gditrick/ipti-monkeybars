@@ -9,50 +9,26 @@ configuration: !ruby/object:IptiConfiguration
         controller_klass: BayModuleController
         d4_starting_address: "01"
         devices:
-          - !ruby/object:OcModuleModel &id001
+          - !ruby/object:LtModuleModel &id001
             address: "01"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: true
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
-          - !ruby/object:OcModuleModel &id002
+            type_sym: !ruby/sym lt
+          - !ruby/object:LtModuleModel &id002
             address: "02"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: false
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
-          - !ruby/object:OcModuleModel &id003
+            type_sym: !ruby/sym lt
+          - !ruby/object:LtModuleModel &id003
             address: "03"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: false
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
-          - !ruby/object:OcModuleModel &id004
+            type_sym: !ruby/sym lt
+          - !ruby/object:LtModuleModel &id004
             address: "04"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: false
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
+            type_sym: !ruby/sym lt
         light_groupings:
           - !ruby/object:LightGroupModel
             controller_klass: LightGroupController
@@ -74,7 +50,7 @@ configuration: !ruby/object:IptiConfiguration
                 devices:
                   - *id001
         lp_starting_address: 01
-        main_oc: *id001
+        main_oc:
         number_of_4d: 0
         number_of_lp: 0
         type_sym: !ruby/sym bay
@@ -83,50 +59,26 @@ configuration: !ruby/object:IptiConfiguration
         controller_klass: BayModuleController
         d4_starting_address: "01"
         devices:
-          - !ruby/object:OcModuleModel &id005
+          - !ruby/object:LtModuleModel &id005
             address: "01"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: true
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
-          - !ruby/object:OcModuleModel &id006
+            type_sym: !ruby/sym lt
+          - !ruby/object:LtModuleModel &id006
             address: "02"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: false
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
-          - !ruby/object:OcModuleModel &id007
+            type_sym: !ruby/sym lt
+          - !ruby/object:LtModuleModel &id007
             address: "03"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: false
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
-          - !ruby/object:OcModuleModel &id008
+            type_sym: !ruby/sym lt
+          - !ruby/object:LtModuleModel &id008
             address: "04"
-            controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            main_oc: false
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
+            controller_klass: LtModuleController
             text: ""
-            type_sym: !ruby/sym oc
+            type_sym: !ruby/sym lt
         light_groupings:
           - !ruby/object:LightGroupModel
             controller_klass: LightGroupController
@@ -148,7 +100,7 @@ configuration: !ruby/object:IptiConfiguration
                 devices:
                   - *id005
         lp_starting_address: 01
-        main_oc: *id005
+        main_oc:
         number_of_4d: 0
         number_of_lp: 0
         type_sym: !ruby/sym bay
