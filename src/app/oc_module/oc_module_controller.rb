@@ -92,7 +92,7 @@ class OcModuleController < ApplicationController
     blinkers.each do |b|
       case b
         when :led then
-          model.up_arrow_color = LED_COLORS[blink_count]
+          model.led_color = LED_COLORS[blink_count]
       end
     end
     blink_count += 1
