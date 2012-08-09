@@ -49,7 +49,14 @@ class LightBarController < ApplicationController
         max_height = bay.height > max_height ? bay.height : max_height
       end
     end
+    transfer[:bays_tab_pane_width]  = max_width
+    transfer[:bays_tab_pane_height] = max_height
     transfer[:preferred_width]  = max_width
-    transfer[:preferred_height] = max_height
+    transfer[:preferred_height] = max_height + APP_MENU_HEIGHT + APP_STATUS_HEIGHT
+  end
+
+  def exit_menu_item_action_performed
+    EM::stop_event_loop
+    exit!(0)
   end
 end
