@@ -41,6 +41,15 @@ class D4ModuleModel < AbstractModel
     @type_sym         = :d4
   end
 
+  def to_yaml_properties
+    ["@address", "@controller_klass", "@type_sym"]
+  end
+
+  def ==(other)
+    @address == other.address and
+      @controller_klass == other.controller_klass
+  end
+
   def bus=comm_bus
     @bus       = comm_bus
     @in_mutex  = Mutex.new
@@ -106,7 +115,7 @@ class D4ModuleModel < AbstractModel
 
     if qty == "    "
       @quantity = nil
-      @digits   = text
+      @display_items << text
     else
       @quantity = qty.to_i
       @digits   = qty
@@ -207,10 +216,10 @@ class D4ModuleModel < AbstractModel
     unless @quantity.nil?
       @add_state        = :on
       @sub_state        = :on
-
-      @current_display_index = 0
-      @digits                = @display_items[@current_display_index]
     end
+
+    @current_display_index = 0
+    @digits                = @display_items[@current_display_index]
 
     @up_arrow_color   = :bright_red unless @up_arrow_state == :off
     @down_arrow_color = :bright_green unless @down_arrow_state == :off

@@ -45,7 +45,7 @@ public class LightBarFrame extends javax.swing.JFrame {
         open_menu_item = new javax.swing.JMenuItem();
         close_menu_item = new javax.swing.JMenuItem();
         save_menu_item = new javax.swing.JMenuItem();
-        saveas_menu_item = new javax.swing.JMenuItem();
+        save_as_menu_item = new javax.swing.JMenuItem();
         file_menu_seperator1 = new javax.swing.JPopupMenu.Separator();
         connect_menu_item = new javax.swing.JMenuItem();
         disconnect_menu_item = new javax.swing.JMenuItem();
@@ -141,8 +141,8 @@ public class LightBarFrame extends javax.swing.JFrame {
         save_menu_item.setText("Save");
         file_menu.add(save_menu_item);
 
-        saveas_menu_item.setText("Save as...");
-        file_menu.add(saveas_menu_item);
+        save_as_menu_item.setText("Save as...");
+        file_menu.add(save_as_menu_item);
         file_menu.add(file_menu_seperator1);
 
         connect_menu_item.setText("Connect");
@@ -203,8 +203,8 @@ public class LightBarFrame extends javax.swing.JFrame {
     private javax.swing.JMenuBar menu_bar;
     private javax.swing.JLabel message_label;
     private javax.swing.JMenuItem open_menu_item;
+    private javax.swing.JMenuItem save_as_menu_item;
     private javax.swing.JMenuItem save_menu_item;
-    private javax.swing.JMenuItem saveas_menu_item;
     private javax.swing.JPanel status_panel;
     // End of variables declaration//GEN-END:variables
     private java.awt.Rectangle frame_bounds;

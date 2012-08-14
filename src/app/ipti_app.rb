@@ -4,10 +4,21 @@ require 'client/interface_controller'
 require 'client/pick_max_protocol'
 
 class IPTIApp
-  attr_accessor :light_bar, :connected, :interface_controller, :try_connect
+  attr_accessor :configuration,
+                :configuration_file,
+                :connected,
+                :interface_controller,
+                :light_bar,
+                :try_connect
 
   def initialize(*args)
-    @light_bar = LightBarModel.new
+    @light_bar                      ||= LightBarModel.new
+    @light_bar.app                    = self
+    @configuration_file             ||= 'ipti.yml'
+    @configuration                  ||= IptiConfiguration.new
+    @configuration.controller_klass ||= 'LightBarController'
+    @configuration.model            ||= @light_bar
+
     unless args.compact.empty?
       options = Hash[*args.flatten]
       if options.has_key?(:light_bar)
@@ -22,12 +33,23 @@ class IPTIApp
       if options.has_key?(:bays)
         @light_bar.bays = options[:bays]
       end
+      if options.has_key?(:file)
+        @configuration_file = options[:file]
+      end
+      if options.has_key?(:configuration)
+        @configuration = options[:configuration]
+        @configuration.controller_klass ||= 'LightBarController'
+        @configuration.model            ||= @light_bar
+        @configuration.model.app        ||= self
+        @light_bar                      = @configuration.model
+      end
     end
 
     @try_connect = (not @light_bar.remote_host_ip.nil? and not @light_bar.remote_host_port.nil?)
 
     @connected = false
     @interface_controller = IPTI::Client::InterfaceController.new('EF')
+    @original_configuration = Marshal.load(Marshal.dump(@configuration))
   end
 
   def connected?
@@ -65,5 +87,13 @@ class IPTIApp
       EM::connect(@light_bar.remote_host_ip, @light_bar.remote_host_port, IPTI::Client::PickMaxProtocol, self)
       LightBarController.instance.update_message_label(@light_bar.status_message)
     end
+  end
+
+  def does_configuration_need_saving?
+    (not @configuration_file.nil? and configuration_changed?)
+  end
+
+  def configuration_changed?
+    @configuration != @original_configuration
   end
 end

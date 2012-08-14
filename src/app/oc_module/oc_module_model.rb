@@ -29,6 +29,15 @@ class OcModuleModel < AbstractModel
     @type_sym         = :oc
   end
 
+  def to_yaml_properties
+    ["@address", "@controller_klass", "@main_oc", "@type_sym"]
+  end
+
+  def ==(other)
+    @address == other.address and
+      @controller_klass == other.controller_klass
+  end
+
   def bus=comm_bus
     @bus       = comm_bus
     @in_mutex  = Mutex.new

@@ -69,27 +69,19 @@ opts.each do |opt, arg|
   end
 end
 
-controller_klass     = 'LightBarController'
-model                = LightBarModel.new
-model.status_message = "Nothing defined to connect to"
-
 if File.exists?(configuration_file)
-  yml = YAML::load(File.open(configuration_file))
-  unless yml['configuration'].nil?
-    configuration    = yml['configuration']
-    controller_klass = configuration.controller_klass
-    model            = configuration.model
-  end
+  yml            = YAML::load(File.open(configuration_file))
+  configuration  = yml['configuration']
 end unless configuration_file.nil?
 
 begin
-  app = IPTIApp.new(:light_bar => model)
-
-  model.app = app
+  app = IPTIApp.new(:file => configuration_file,
+                    :configuration => configuration
+  )
 
   EM::run do
-    controller = eval("#{controller_klass}.instance")
-    controller.open(:model => model)
+    controller = eval("#{app.configuration.controller_klass}.instance")
+    controller.open(:model => app.configuration.model)
     app.try_connecting
   end
   # Your application code goes here

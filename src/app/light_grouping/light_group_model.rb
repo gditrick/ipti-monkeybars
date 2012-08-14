@@ -8,4 +8,13 @@ class LightGroupModel < AbstractModel
     @rows             = []
     @controller_klass = 'LightGroupController'
   end
+
+  def to_yaml_properties
+    ["@controller_klass", "@rows"]
+  end
+
+  def ==(other)
+    @controller_klass == other.controller_klass and
+      @rows == other.rows
+  end
 end

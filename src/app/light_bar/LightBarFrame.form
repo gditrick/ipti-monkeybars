@@ -24,7 +24,7 @@
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="saveas_menu_item">
+            <MenuItem class="javax.swing.JMenuItem" name="save_as_menu_item">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save as..."/>
               </Properties>

@@ -193,9 +193,7 @@ configuration: !ruby/object:IptiConfiguration
         number_of_4d: 05
         number_of_lp: 0
         type_sym: !ruby/sym bay
-    height: 100
 #    remote_host_ip: 192.168.1.31  # hellboy (greg's laptop)
     remote_host_ip: 192.168.1.4 # robin
     remote_host_port: 2000
-#    width: 900
 

@@ -80,6 +80,26 @@ class LightBarController < ApplicationController
     update_view
   end
 
+  def save_menu_item_action_performed
+    unless model.app.configuration_file.nil?
+
+    end
+  end
+
+  def save_as_menu_item_action_performed
+    file_filter  = javax.swing.filechooser.FileNameExtensionFilter.new("YAML configuration file", "yaml", "yml")
+    file_chooser = javax.swing.JFileChooser.new
+
+    file_chooser.file_filter = file_filter
+    file_chooser.current_directory = Java::JavaIO.File.new(Dir.pwd)
+    file_chooser.dialog_type = javax.swing.JFileChooser::SAVE_DIALOG
+    file_chooser.selected_file = Java::JavaIO.File.new(model.app.configuration_file)
+
+    if file_chooser.show_dialog(@main_view_component, "Save") == javax.swing.JFileChooser::APPROVE_OPTION
+      pp "Saving config to file #{file_chooser.selected_file.absolute_path}"
+    end
+  end
+
   def exit_menu_item_action_performed
     EM::stop_event_loop
     Java::JavaLang::System.exit(0)
