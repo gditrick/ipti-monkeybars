@@ -45,6 +45,9 @@ pp "Connection closed to server" if @app.connected?
       @data_received = ""
       @in_queue      = nil
       @out_queue     = nil
+      LightBarController.instance.update_message_label("Connection #{@ip}:#{@port} closed")
+#      LightBarController.instance.disable_disconnect
+#      LightBarController.instance.enable_connect
     end
 
     def connection
@@ -56,7 +59,6 @@ pp "Connection closed to server" if @app.connected?
       @app.interface_controller.connect
       @app.light_bar.bays do |bay|
         bay.bay_controller = IPTI::Client::BayController.new(bay.address, self)
-#        bay.bay_controller.connect
       end
       @data_received   = ""
       @data_received   = ""
@@ -64,6 +66,9 @@ pp "Connection closed to server" if @app.connected?
       @in_queue_mutex  = Mutex.new
       @out_queue       = EM::Queue.new
       @out_queue_mutex = Mutex.new
+      LightBarController.instance.update_message_label("Connected to #{@ip}:#{@port}")
+#      LightBarController.instance.enable_disconnect
+#      LightBarController.instance.disable_connect
     end
 
     def push_out_msg(msg_hash)
@@ -121,6 +126,7 @@ pp "Connection closed to server" if @app.connected?
           message = IPTI::PickMaxMessage.new(controller, message_type, seq.to_i, msg)
           message.sequence = seq.to_i
       end
+      LightBarController.instance.update_last_recv_text(message) unless message.is_ack?
       controller.push_in_msg(message)
     end
 
@@ -130,6 +136,7 @@ pp "Connection closed to server" if @app.connected?
       msg  += data
       msg  += "\003"
 pp "send: " + msg
+      LightBarController.instance.update_last_sent_text(message) unless message.is_ack?
       message.controller.track_response(message) if message.response_required?
       super msg
     end

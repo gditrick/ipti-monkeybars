@@ -40,11 +40,11 @@ module IPTI
     class PickMaxProtocol < EventMachine::Connection
       include IPTI::PickMaxProtocol
 
-      state_machine :state, :initial => :not_connected do
-        after_transition :not_connected => :connected, :do => :connection
+      state_machine :state, :initial => :disconnected do
+        after_transition :disconnected => :connected, :do => :connection
 #
         event :connect do
-          transition :not_connected => :connected
+          transition :disconnected => :connected
         end
       end
     end

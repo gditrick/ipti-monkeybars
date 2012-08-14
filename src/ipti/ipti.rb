@@ -84,12 +84,11 @@ module IPTI
 
       data += ack
 
-      msg = @controller.address == 'EF' ?
+      @bytes = @controller.address == 'EF' ?
           @controller.address + @message_type.code + data :
           @controller.address + ("%2.2d" % @sequence) + ':' + @message_type.code + data
 
-      msg += IPTI::PickMaxProtocol.check_sum(msg)
-      msg
+      @bytes += IPTI::PickMaxProtocol.check_sum(@bytes)
     end
 
     def is_ack?

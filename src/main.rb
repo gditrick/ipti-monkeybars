@@ -69,8 +69,9 @@ opts.each do |opt, arg|
   end
 end
 
-controller_klass = 'LightBarController'
-model            = LightBarModel.new
+controller_klass     = 'LightBarController'
+model                = LightBarModel.new
+model.status_message = "Nothing defined to connect to"
 
 if File.exists?(configuration_file)
   yml = YAML::load(File.open(configuration_file))
@@ -84,12 +85,12 @@ end unless configuration_file.nil?
 begin
   app = IPTIApp.new(:light_bar => model)
 
+  model.app = app
+
   EM::run do
     controller = eval("#{controller_klass}.instance")
     controller.open(:model => model)
-    EM::PeriodicTimer.new(5) do
-      app.connect if app.not_connected?
-    end
+    app.try_connecting
   end
   # Your application code goes here
 rescue => e

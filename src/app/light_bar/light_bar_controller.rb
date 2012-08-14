@@ -55,8 +55,41 @@ class LightBarController < ApplicationController
     transfer[:preferred_height] = max_height + APP_MENU_HEIGHT + APP_STATUS_HEIGHT
   end
 
+  def update_message_label(msg="")
+    model.status_message = msg
+    update_view
+  end
+
+  def update_last_sent_text(pick_max_message)
+    model.last_sent_message = ""
+    unless pick_max_message.nil?
+      model.last_sent_message = "Ctl:%s  Type:%s(%s)" % [pick_max_message.controller.address,
+                                                         pick_max_message.message_type.type.to_s.upcase,
+                                                         pick_max_message.message_type.code.to_s]
+    end
+    update_view
+  end
+
+  def update_last_recv_text(pick_max_message)
+    model.last_recv_message = ""
+    unless pick_max_message.nil?
+      model.last_recv_message = "Ctl:%s  Type:%s(%s)" % [pick_max_message.controller.address,
+                                                         pick_max_message.message_type.type.to_s.upcase,
+                                                         pick_max_message.message_type.code.to_s]
+    end
+    update_view
+  end
+
   def exit_menu_item_action_performed
     EM::stop_event_loop
-    exit!(0)
+    Java::JavaLang::System.exit(0)
+  end
+
+  def connect_menu_item_action_performed
+    model.app.try_connecting
+  end
+
+  def disconnect_menu_item_action_performed
+    model.app.dont_try_connecting
   end
 end

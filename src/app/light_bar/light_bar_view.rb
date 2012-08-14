@@ -3,17 +3,17 @@ class LightBarView < ApplicationView
 
   nest :sub_view => :bay, :view => :bays_tab_pane
 
+  map :model => :status_message,     :view => "message_label.text"
+  map :model => :last_sent_message,  :view => "last_sent_field.text"
+  map :model => :last_recv_message,  :view => "last_recv_field.text"
+  map :model => "app.disconnected?", :view => "connect_menu_item.enabled"
+  map :model => "app.connected?",    :view => "disconnect_menu_item.enabled"
+
   def load
     bays_tab_pane.remove_all
   end
 
   def on_first_update(model, transfer)
-    pp transfer[:bays_tab_pane_width]
-    pp transfer[:bays_tab_pane_height]
-#    bays_tab_pane.set_size(transfer[:bays_tab_pane_width], transfer[:bays_tab_pane_height])
-#    light_scroll_pane.set_size(transfer[:bays_tab_pane_width], transfer[:bays_tab_pane_height])
-#    bays_tab_pane.set_preferred_size(Java::JavaAwt::Dimension.new(transfer[:bays_tab_pane_width], transfer[:bays_tab_pane_height]))
-#    light_scroll_pane.set_preferred_size(Java::JavaAwt::Dimension.new(transfer[:bays_tab_pane_width], transfer[:bays_tab_pane_height]))
     @main_view_component.set_size(transfer[:preferred_width], transfer[:preferred_height])
     super
   end
