@@ -82,7 +82,9 @@ class LightBarController < ApplicationController
 
   def save_menu_item_action_performed
     unless model.app.configuration_file.nil?
-
+      pp "Saving config to file #{model.app.configuration_file}"
+      dump_configuration(model.app.configuration_file)
+      model.app.configuration_updated
     end
   end
 
@@ -97,6 +99,8 @@ class LightBarController < ApplicationController
 
     if file_chooser.show_dialog(@main_view_component, "Save") == javax.swing.JFileChooser::APPROVE_OPTION
       pp "Saving config to file #{file_chooser.selected_file.absolute_path}"
+      model.app.configuration_file = file_chooser.selected_file.absolute_path
+      dump_configuration(model.app.configuration_file)
     end
   end
 
@@ -111,5 +115,26 @@ class LightBarController < ApplicationController
 
   def disconnect_menu_item_action_performed
     model.app.dont_try_connecting
+  end
+
+  def interface_configure_menu_item_action_performed
+    controller =  InterfaceConfigurationController.instance
+    @controllers << controller unless @controllers.include?(controller)
+    add_nested_controller(:interface_configure, controller)
+    controller.open(:model => model)
+    if model.remote_host_ip != model.app.configuration.model.remote_host_ip or
+       model.remote_host_port != model.app.configuration.model.remote_host_port
+      model.app.configuration.model.remote_host_ip   = model.remote_host_ip
+      model.app.configuration.model.remote_host_port = model.remote_host_port
+      model.app.interface_controller.connection.close_connection unless model.app.interface_controller.connection.nil?
+    end
+  end
+
+  private
+
+  def dump_configuration(file_name)
+    file = File.new(file_name, "w")
+    YAML.dump({'configuration' => model.app.configuration}, file)
+    file.close
   end
 end

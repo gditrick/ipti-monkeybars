@@ -1,14 +1,15 @@
 class D4ModuleView < ApplicationView
   set_java_class 'app.d4_module.D4ModulePanel'
 
-  BUTTON_STATES = {:off => false, :on => true}
+  BUTTON_STATES = {:off => false, :on => true, nil => false}
 
   LED_COLORS = {
       :bright_red   => Java::JavaAwt::Color::RED.brighter,
       :bright_green => Java::JavaAwt::Color::GREEN.brighter,
       :dark_gray    => Java::JavaAwt::Color::DARK_GRAY,
       :gray         => Java::JavaAwt::Color::GRAY,
-      :light_gray   => Java::JavaAwt::Color::LIGHT_GRAY
+      :light_gray   => Java::JavaAwt::Color::LIGHT_GRAY,
+      nil           => Java::JavaAwt::Color::LIGHT_GRAY,
   }
 
   map :model => :digits,           :view => "digitsField.text"

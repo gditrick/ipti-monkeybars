@@ -65,7 +65,7 @@ opts.each do |opt, arg|
     when '--help' then
       puts ARGV[0] + " [-h|--help] [-c|--configuration <Yaml-config-file>"
     when '--configuration' then
-      configuration_file = arg 
+      configuration_file = File.join(Dir.pwd, arg)
   end
 end
 

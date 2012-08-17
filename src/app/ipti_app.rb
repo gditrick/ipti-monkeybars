@@ -49,7 +49,7 @@ class IPTIApp
 
     @connected = false
     @interface_controller = IPTI::Client::InterfaceController.new('EF')
-    @original_configuration = Marshal.load(Marshal.dump(@configuration))
+    configuration_updated
   end
 
   def connected?
@@ -94,6 +94,10 @@ class IPTIApp
   end
 
   def configuration_changed?
-    @configuration != @original_configuration
+    YAML.load(YAML.dump(@configuration)) != YAML.load(YAML.dump(@original_configuration))
+  end
+
+  def configuration_updated
+    @original_configuration = YAML.load(YAML.dump(@configuration))
   end
 end

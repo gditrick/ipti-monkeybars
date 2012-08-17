@@ -52,6 +52,7 @@ public class LightBarFrame extends javax.swing.JFrame {
         file_menu_seperator2 = new javax.swing.JPopupMenu.Separator();
         exit_menu_item = new javax.swing.JMenuItem();
         configure_menu = new javax.swing.JMenu();
+        interface_configure_menu_item = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IPTI Light Bar Interface Simulator");
@@ -158,6 +159,10 @@ public class LightBarFrame extends javax.swing.JFrame {
         menu_bar.add(file_menu);
 
         configure_menu.setText("Configure");
+
+        interface_configure_menu_item.setText("Interface...");
+        configure_menu.add(interface_configure_menu_item);
+
         menu_bar.add(configure_menu);
 
         setJMenuBar(menu_bar);
@@ -193,6 +198,7 @@ public class LightBarFrame extends javax.swing.JFrame {
     private javax.swing.JMenu file_menu;
     private javax.swing.JPopupMenu.Separator file_menu_seperator1;
     private javax.swing.JPopupMenu.Separator file_menu_seperator2;
+    private javax.swing.JMenuItem interface_configure_menu_item;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextField last_recv_field;

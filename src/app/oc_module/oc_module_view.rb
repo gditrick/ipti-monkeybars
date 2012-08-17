@@ -1,14 +1,15 @@
 class OcModuleView < ApplicationView
   set_java_class 'app.oc_module.OcModulePanel'
 
-  BUTTON_STATES = {:off => false, :on => true}
+  BUTTON_STATES = {:off => false, :on => true, nil => false}
 
   LED_COLORS = {
       :bright_cyan      => Java::JavaAwt::Color::CYAN.brighter,
       :deep_sky_blue    => Java::JavaAwt::Color.new(0x00BFFF),
       :deep_turquoise   => Java::JavaAwt::Color.new(0x00CED1),
       :medium_turquoise => Java::JavaAwt::Color.new(0x48D1CC),
-      :light_gray       => Java::JavaAwt::Color::LIGHT_GRAY
+      :light_gray       => Java::JavaAwt::Color::LIGHT_GRAY,
+      nil               => Java::JavaAwt::Color::LIGHT_GRAY,
   }
 
   map :model => :text,       :view => "displayText.text"

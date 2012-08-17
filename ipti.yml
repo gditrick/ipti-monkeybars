@@ -1,199 +1,147 @@
-## YAML Template.
----
-configuration: !ruby/object:IptiConfiguration
+--- 
+configuration: !ruby/object:IptiConfiguration 
   controller_klass: LightBarController
-  model: !ruby/object:LightBarModel
-    bays:
-      - !ruby/object:BayModuleModel
+  model: !ruby/object:LightBarModel 
+    bays: 
+      - !ruby/object:BayModuleModel 
         address: "01"
         controller_klass: BayModuleController
         d4_starting_address: "01"
-        devices:
-          - !ruby/object:LtModuleModel &id001
+        devices: 
+          - &id004 !ruby/object:LtModuleModel 
             address: "01"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-          - !ruby/object:LtModuleModel &id002
+            type_sym: :lt
+          - &id003 !ruby/object:LtModuleModel 
             address: "02"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-          - !ruby/object:LtModuleModel &id003
+            type_sym: :lt
+          - &id002 !ruby/object:LtModuleModel 
             address: "03"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-          - !ruby/object:LtModuleModel &id004
+            type_sym: :lt
+          - &id001 !ruby/object:LtModuleModel 
             address: "04"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-        light_groupings:
-          - !ruby/object:LightGroupModel
+            type_sym: :lt
+        light_groupings: 
+          - !ruby/object:LightGroupModel 
             controller_klass: LightGroupController
-            rows:
-              - !ruby/object:LightRowModel
+            rows: 
+              - !ruby/object:LightRowModel 
                 controller_klass: LightRowController
-                devices:
-                  - *id004
-              - !ruby/object:LightRowModel
-                controller_klass: LightRowController
-                devices:
-                  - *id003
-              - !ruby/object:LightRowModel
-                controller_klass: LightRowController
-                devices:
-                  - *id002
-              - !ruby/object:LightRowModel
-                controller_klass: LightRowController
-                devices:
+                devices: 
                   - *id001
-        lp_starting_address: 01
-        main_oc:
+              - !ruby/object:LightRowModel 
+                controller_klass: LightRowController
+                devices: 
+                  - *id002
+              - !ruby/object:LightRowModel 
+                controller_klass: LightRowController
+                devices: 
+                  - *id003
+              - !ruby/object:LightRowModel 
+                controller_klass: LightRowController
+                devices: 
+                  - *id004
+        lp_starting_address: 1
+        main_oc: 
         number_of_4d: 0
         number_of_lp: 0
-        type_sym: !ruby/sym bay
-      - !ruby/object:BayModuleModel
+        type_sym: :bay
+      - !ruby/object:BayModuleModel 
         address: "02"
         controller_klass: BayModuleController
         d4_starting_address: "01"
-        devices:
-          - !ruby/object:LtModuleModel &id005
+        devices: 
+          - &id008 !ruby/object:LtModuleModel 
             address: "01"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-          - !ruby/object:LtModuleModel &id006
+            type_sym: :lt
+          - &id007 !ruby/object:LtModuleModel 
             address: "02"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-          - !ruby/object:LtModuleModel &id007
+            type_sym: :lt
+          - &id006 !ruby/object:LtModuleModel 
             address: "03"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-          - !ruby/object:LtModuleModel &id008
+            type_sym: :lt
+          - &id005 !ruby/object:LtModuleModel 
             address: "04"
             controller_klass: LtModuleController
-            text: ""
-            type_sym: !ruby/sym lt
-        light_groupings:
-          - !ruby/object:LightGroupModel
+            type_sym: :lt
+        light_groupings: 
+          - !ruby/object:LightGroupModel 
             controller_klass: LightGroupController
-            rows:
-              - !ruby/object:LightRowModel
+            rows: 
+              - !ruby/object:LightRowModel 
                 controller_klass: LightRowController
-                devices:
-                  - *id008
-              - !ruby/object:LightRowModel
-                controller_klass: LightRowController
-                devices:
-                  - *id007
-              - !ruby/object:LightRowModel
-                controller_klass: LightRowController
-                devices:
-                  - *id006
-              - !ruby/object:LightRowModel
-                controller_klass: LightRowController
-                devices:
+                devices: 
                   - *id005
-        lp_starting_address: 01
-        main_oc:
+              - !ruby/object:LightRowModel 
+                controller_klass: LightRowController
+                devices: 
+                  - *id006
+              - !ruby/object:LightRowModel 
+                controller_klass: LightRowController
+                devices: 
+                  - *id007
+              - !ruby/object:LightRowModel 
+                controller_klass: LightRowController
+                devices: 
+                  - *id008
+        lp_starting_address: 1
+        main_oc: 
         number_of_4d: 0
         number_of_lp: 0
-        type_sym: !ruby/sym bay
-      - !ruby/object:BayModuleModel
+        type_sym: :bay
+      - !ruby/object:BayModuleModel 
         address: "03"
         controller_klass: BayModuleController
         d4_starting_address: "01"
-        devices:
-          - !ruby/object:D4ModuleModel &id009
-            add_state: !ruby/sym off
+        devices: 
+          - &id014 !ruby/object:D4ModuleModel 
             address: "05"
             controller_klass: D4ModuleController
-            down_arrow_color: !ruby/sym gray
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-            up_arrow_color: !ruby/sym gray
-          - !ruby/object:D4ModuleModel &id010
-            add_state: !ruby/sym off
+            type_sym: :d4
+          - &id013 !ruby/object:D4ModuleModel 
             address: "04"
             controller_klass: D4ModuleController
-            down_arrow_color: !ruby/sym gray
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-            up_arrow_color: !ruby/sym gray
-          - !ruby/object:D4ModuleModel &id011
-            add_state: !ruby/sym off
+            type_sym: :d4
+          - &id012 !ruby/object:D4ModuleModel 
             address: "03"
             controller_klass: D4ModuleController
-            down_arrow_color: !ruby/sym gray
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-            up_arrow_color: !ruby/sym gray
-          - !ruby/object:OcModuleModel &id012
+            type_sym: :d4
+          - &id011 !ruby/object:OcModuleModel 
             address: "01"
             controller_klass: OcModuleController
-            down_state: !ruby/sym off
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
             main_oc: true
-            up_state: !ruby/sym off
-            task_state: !ruby/sym off
-            text: ""
-            type_sym: !ruby/sym oc
-          - !ruby/object:D4ModuleModel &id013
-            add_state: !ruby/sym off
+            type_sym: :oc
+          - &id010 !ruby/object:D4ModuleModel 
             address: "02"
             controller_klass: D4ModuleController
-            down_arrow_color: !ruby/sym gray
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-            up_arrow_color: !ruby/sym gray
-          - !ruby/object:D4ModuleModel &id014
-            add_state: !ruby/sym off
+            type_sym: :d4
+          - &id009 !ruby/object:D4ModuleModel 
             address: "01"
             controller_klass: D4ModuleController
-            down_arrow_color: !ruby/sym gray
-            led_color: !ruby/sym light_gray
-            led_state: !ruby/sym off
-            sub_state: !ruby/sym off
-            digits: ""
-            type_sym: !ruby/sym d4
-            up_arrow_color: !ruby/sym gray
-        light_groupings:
-          - !ruby/object:LightGroupModel
+            type_sym: :d4
+        light_groupings: 
+          - !ruby/object:LightGroupModel 
             controller_klass: LightGroupController
-            rows:
-              - !ruby/object:LightRowModel
+            rows: 
+              - !ruby/object:LightRowModel 
                 controller_klass: LightRowController
-                devices:
-                  - *id014
-                  - *id013
-                  - *id012
-                  - *id011
-                  - *id010
+                devices: 
                   - *id009
-        lp_starting_address: 01
-        main_oc: *id012
-        number_of_4d: 05
+                  - *id010
+                  - *id011
+                  - *id012
+                  - *id013
+                  - *id014
+        lp_starting_address: 1
+        main_oc: *id011
+        number_of_4d: 5
         number_of_lp: 0
-        type_sym: !ruby/sym bay
-#    remote_host_ip: 192.168.1.31  # hellboy (greg's laptop)
-    remote_host_ip: 192.168.1.4 # robin
+        type_sym: :bay
+    remote_host_ip: 192.168.1.4
     remote_host_port: 2000
-

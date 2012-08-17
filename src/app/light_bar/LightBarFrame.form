@@ -54,6 +54,13 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Configure"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="interface_configure_menu_item">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Interface..."/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
         </Menu>
       </SubComponents>
     </Menu>
