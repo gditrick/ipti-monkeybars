@@ -13,8 +13,6 @@ class LightBarController < ApplicationController
         update_model(model, *model.attributes)
       end
     end
-#pp @__view.screen_size.width
-#pp @__view.screen_size.height
     @controllers ||= []
     model.bays.each do |bay|
       c =  eval("#{bay.controller_klass}.create_instance")
@@ -78,6 +76,24 @@ class LightBarController < ApplicationController
                                                          pick_max_message.message_type.code.to_s]
     end
     update_view
+  end
+
+  def close_menu_item_action_performed
+    unless model.app.configuration_file.nil?
+      pp "Closing current configuration"
+      model.app.dont_try_connecting
+      EM::stop_event_loop
+      @controllers.each do |ctl|
+        remove_nested_controller(:bay, ctl)
+      end
+      transfer[:preferred_width]  = 195 + 2 + 320 + APP_SCROLLBAR_WIDTH # sizes of 1 OC Module and
+      transfer[:preferred_height] = APP_MENU_HEIGHT + APP_STATUS_HEIGHT + 80 + 2 + 80 + APP_SCROLLBAR_HEIGHT  # 1 D4 Module + 20 for scroll bars
+      update_view
+#      model.app.configuration.model.bays.each do |bay|
+#        bay.devices.each do |device|
+#        end
+#      end
+    end
   end
 
   def save_menu_item_action_performed
