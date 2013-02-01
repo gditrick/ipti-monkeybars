@@ -1,8 +1,8 @@
 #===============================================================================
 # Much of the platform specific code should be called before Swing is touched.
 # The useScreenMenuBar is an example of this.
-require 'java'
 require 'rbconfig'
+require 'java'
 require 'getoptlong'
 require 'yaml'
 require 'pp'
@@ -11,7 +11,7 @@ require 'pp'
 # Platform specific operations, feel free to remove or override any of these
 # that don't work for your platform/application
 
-case Config::CONFIG["host_os"]
+case RbConfig::CONFIG["host_os"]
 when /darwin/i # OSX specific code
   java.lang.System.set_property("apple.laf.useScreenMenuBar", "true")
 when /^win|mswin/i # Windows specific code
@@ -21,6 +21,8 @@ end
 # End of platform specific code
 #===============================================================================
 $LOAD_PATH << File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH << 'app'
+$LOAD_PATH << 'app/ipti'
 require 'manifest'
 
 # Set up global error handling so that it is consistantly logged or outputed
@@ -52,8 +54,9 @@ require 'eventmachine'
 require 'ipti_configuration'
 require 'ipti_app'
 
-Dir.glob(File.dirname(__FILE__) + '/**/*_controller.rb').each{|f| require(f) }
 Dir.glob(File.dirname(__FILE__) + '/**/*_model.rb').each{|f| require(f) }
+Dir.glob(File.dirname(__FILE__) + '/**/*_view.rb').each{|f| require(f) }
+Dir.glob(File.dirname(__FILE__) + '/**/*_controller.rb').each{|f| require(f) }
 
 configuration_file = nil
 opts = GetoptLong.new(

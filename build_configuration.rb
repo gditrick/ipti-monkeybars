@@ -1,6 +1,6 @@
 configuration do |c|
 	# The name for your resulting application file (e.g., if the project_name is 'foo' then you'll get foo.jar, foo.exe, etc.)
-	# default value: "ipti_lights3"
+	# default value: "ipti-monkeybars"
 	#
 	c.project_name = "ipti_light_bar"
 
@@ -9,19 +9,25 @@ configuration do |c|
 	#
 	#c.output_dir = "package"
 
+	# The type of executable to create (console or gui)
+	# default value: "gui"
+	#
+	#c.executable_type = "gui"
+
 	# The main ruby file to invoke, minus the .rb extension
 	# default value: "main"
 	#
 	#c.main_ruby_file = "main"
 
 	# The fully-qualified name of the main Java file used to initiate the application.
-	# default value: "org.rubyforge.rawr.Main"
+	# default value: "org.monkeybars.rawr.Main"
 	#
-	c.main_java_file = "org.rubyforge.rawr.Main"
+	#c.main_java_file = "org.monkeybars.rawr.Main"
 
 	# A list of directories where source files reside
 	# default value: ["src"]
 	#
+	#c.source_dirs = ["src"]
 	c.source_dirs = ["src", "lib/ruby"]
 
 	# A list of regexps of files to exclude
@@ -29,10 +35,15 @@ configuration do |c|
 	#
 	#c.source_exclude_filter = []
 
-	# Whether Ruby source files should be compiled into .class files
+	# The base directory that holds Mirah files, or subdirectories with Mirah files.
+	# default value: "src"
+	#
+	#c.mirah_source_root = "src"
+
+	# Whether Ruby source files should be compiled into .class files. Setting this to true currently breaks packaging
 	# default value: false
 	#
-	#c.compile_ruby_files = true
+	#c.compile_ruby_files = false
 
 	# A list of individual Java library files to include.
 	# default value: []
@@ -42,16 +53,19 @@ configuration do |c|
 	# A list of directories for rawr to include . All files in the given directories get bundled up.
 	# default value: ["lib/java"]
 	#
+	#c.java_lib_dirs = ["lib/java"]
 	c.java_lib_dirs = ["lib/java", "lib/ruby"]
 
 	# Undocumented option 'files_to_copy'
 	# default value: []
 	#
-	c.files_to_copy = ["ipti.yml"]
+	#c.files_to_copy = []
+	c.files_to_copy = Dir.glob(File.dirname(__FILE__) + '/ipti*.yml')
 
 	# Undocumented option 'target_jvm_version'
 	# default value: 1.6
 	#
+	#c.target_jvm_version = 1.6
 	c.target_jvm_version = 1.6
 
 	# Undocumented option 'jvm_arguments'
@@ -75,6 +89,11 @@ configuration do |c|
 	# default value: nil
 	#
 	#c.mac_do_not_generate_plist = nil
+
+	# working directory specified in plist file
+	# default value: "$APP_PACKAGE"
+	#
+	#c.mac_plist_working_directory = "$APP_PACKAGE"
 
 	# Undocumented option 'mac_icon_path'
 	# default value: nil

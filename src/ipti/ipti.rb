@@ -203,10 +203,10 @@ module IPTI
                   @response_tracker.cancel
                   process_response(message)
                 else
-                  process_message(message)
+                  process_message(message) unless message.is_ack?
                 end
               elsif self.idle?
-                process_message(message)
+                process_message(message) unless message.is_ack?
               else
                 raise "Controller: #{self.address} in a bad state: #{self.state_name}"
               end

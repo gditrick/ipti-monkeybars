@@ -5,6 +5,8 @@ class OcModuleModel < AbstractModel
                 :controller_klass,
                 :controller,
                 :down_state,
+                :fails,
+                :fail_rate,
                 :fast_blinkers,
                 :fast_blink_count,
                 :led_color,
@@ -22,6 +24,8 @@ class OcModuleModel < AbstractModel
   def initialize(addr="01")
     @address          = addr
     @controller_klass = 'OcModuleController'
+    @fails            = false
+    @fail_rate        = 0
     @text             = ''
     @led_state        = :off
     @up_state         = :off
@@ -30,7 +34,7 @@ class OcModuleModel < AbstractModel
   end
 
   def to_yaml_properties
-    ["@address", "@controller_klass", "@main_oc", "@type_sym"]
+    ["@address", "@controller_klass", "@main_oc", "@type_sym", "@fail_rate"]
   end
 
   def ==(other)
@@ -58,7 +62,7 @@ class OcModuleModel < AbstractModel
           case message.message_type.type
             when :oc_display then
               display_text(message.bytes)
-              @controller.activate_module(self)
+              @controller.activate_module(self) if self.worked?
             when :cancel_order
               @controller.cancel
             else
@@ -73,6 +77,18 @@ class OcModuleModel < AbstractModel
     @blink
   end
 
+  def fail?
+    @fails = rand(100) < (@fail_rate.nil? ? 0 : @fail_rate)
+  end
+
+  def failed?
+    @fails
+  end
+
+  def worked?
+    not @fails
+  end
+
   private
 
   def display_text(msg)
@@ -80,6 +96,8 @@ class OcModuleModel < AbstractModel
     control_byte  = msg.slice(10,1).hex
     text          = msg.slice(11..-3)
     text.slice!(29..-1)
+
+    return if fail?
 
     @scroll_text  = nil
     @scroll_index = 0

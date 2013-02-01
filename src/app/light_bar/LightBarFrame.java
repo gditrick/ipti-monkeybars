@@ -57,9 +57,10 @@ public class LightBarFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IPTI Light Bar Interface Simulator");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setName("light_bar_frame");
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                frame_opened(evt);
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
             }
         });
 
@@ -73,7 +74,7 @@ public class LightBarFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 820, Short.MAX_VALUE)
+            .addGap(0, 824, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,7 +176,7 @@ public class LightBarFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleParent(this);
@@ -183,9 +184,9 @@ public class LightBarFrame extends javax.swing.JFrame {
         setBounds(0, 0, 852, 213);
     }// </editor-fold>//GEN-END:initComponents
 
-  private void frame_opened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_frame_opened
-    // TODO add your handling code here:
-  }//GEN-LAST:event_frame_opened
+	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+		// TODO add your handling code here:
+	}//GEN-LAST:event_formWindowClosing
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

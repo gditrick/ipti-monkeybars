@@ -99,7 +99,7 @@ module IPTI
             message.fields = bus_msg.fields
             message.sequence = @seq
             message.response_required=true
-            @connection.push_out_msg(message)
+            self.push_out_msg(message)
           else
             raise "Message Request #{bus_msg.code} not implemented"
           end
@@ -184,8 +184,9 @@ module IPTI
           if d4_module.nil?
             d4_msg.fields[:success] = false
           else
+            d4_module.fails = d4_module.fail?
             d4_module.push_msg(message)
-            d4_msg.fields[:success] = true
+            d4_msg.fields[:success] = d4_module.worked?
           end
           d4_msg.fields[:ack] = true
           d4_msg.sequence = message.sequence
@@ -224,8 +225,9 @@ module IPTI
           if d4_module.nil?
             d4_msg.fields[:success] = false
           else
+            d4_module.fails = d4_module.fail?
             d4_module.push_msg(message)
-            d4_msg.fields[:success] = true
+            d4_msg.fields[:success] = d4_module.worked?
           end
           d4_msg.fields[:ack] = true
           d4_msg.sequence = message.sequence
@@ -261,8 +263,9 @@ module IPTI
           if oc_module.nil?
             oc_msg.fields[:success] = false
           else
-            oc_msg.fields[:success] = true
+            oc_module.fails = oc_module.fail?
             oc_module.push_msg(message)
+            oc_msg.fields[:success] = oc_module.worked?
           end
           oc_msg.fields[:ack] = true
           oc_msg.sequence = message.sequence

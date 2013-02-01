@@ -4,9 +4,7 @@ class OcModuleController < ApplicationController
 
   attr_accessor :timers, :timer_mutex
 
-  add_listener :type => :action, :components => "led_button"
-  add_listener :type => :action, :components => "up_button"
-  add_listener :type => :action, :components => "down_button"
+#  add_listener :type => :action, :components => ["led_button", "up_button","down_button"]
 
   LED_COLORS = [:bright_cyan, :light_gray]
 

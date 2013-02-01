@@ -1,7 +1,6 @@
 require 'eventmachine'
-require 'ipti'
-require 'client/interface_controller'
-require 'client/pick_max_protocol'
+require 'ipti/ipti'
+require 'ipti/ipti_client'
 
 class IPTIApp
   attr_accessor :configuration,

@@ -11,6 +11,8 @@ class D4ModuleModel < AbstractModel
                 :down_arrow_color,
                 :down_arrow_state,
                 :ext_functions,
+                :fails,
+                :fail_rate,
                 :fast_blinkers,
                 :fast_blink_count,
                 :led_color,
@@ -35,6 +37,8 @@ class D4ModuleModel < AbstractModel
     @controller_klass = 'D4ModuleController'
     @digits           = ''
     @led_state        = :off
+    @fails            = false
+    @fail_rate        = 0
     @add_state        = :off
     @sub_state        = :off
     @state            = :idle
@@ -42,7 +46,7 @@ class D4ModuleModel < AbstractModel
   end
 
   def to_yaml_properties
-    ["@address", "@controller_klass", "@type_sym"]
+    ["@address", "@controller_klass", "@fail_rate", "@type_sym"]
   end
 
   def ==(other)
@@ -70,9 +74,10 @@ class D4ModuleModel < AbstractModel
           case message.message_type.type
             when :d4_display then
               display_order(message.bytes)
-              @controller.activate_module(self)
+              @controller.activate_module(self) if self.worked?
             when :d4_menu then
-              @controller.activate_module(self) if display_menu(message.bytes)
+              display_menu(message.bytes)
+              @controller.activate_module(self) if self.worked?
             when :cancel_order
               @controller.cancel
             else
@@ -87,6 +92,18 @@ class D4ModuleModel < AbstractModel
     @blink
   end
 
+  def fail?
+    @fails = rand(100) < (@fail_rate.nil? ? 0 : @fail_rate)
+  end
+
+  def failed?
+    @fails
+  end
+
+  def worked?
+    not @fails
+  end
+
   private
 
   def display_order(msg)
@@ -97,6 +114,8 @@ class D4ModuleModel < AbstractModel
     ext_function  = msg.slice(19,1).hex
     infrared_flag = msg.slice(20,1)
     flash_mask    = msg.slice(21,1)
+
+    return if fail?
 
     @state         = :order
 

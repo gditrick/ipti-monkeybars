@@ -4,6 +4,8 @@ class LtModuleModel < AbstractModel
                 :bus,
                 :controller_klass,
                 :controller,
+                :fails,
+                :fail_rate,
                 :scroll_text,
                 :scroll_index,
                 :text,
@@ -12,12 +14,14 @@ class LtModuleModel < AbstractModel
   def initialize(addr="01")
     @address          = addr
     @controller_klass = 'LtModuleController'
+    @fails            = false
+    @fail_rate        = 0
     @text             = ''
     @type_sym         = :lt
   end
 
   def to_yaml_properties
-    ["@address", "@controller_klass", "@type_sym"]
+    ["@address", "@controller_klass", "@type_sym", "@fail_rate"]
   end
 
   def ==(other)
@@ -45,7 +49,7 @@ class LtModuleModel < AbstractModel
           case message.message_type.type
             when :lt_display then
               display_text(message.bytes)
-              @controller.activate_module(self)
+              @controller.activate_module(self) if self.worked?
             else
               raise "Unknown LT Message Type #{message.message_type.type}"
           end
@@ -58,11 +62,25 @@ class LtModuleModel < AbstractModel
     @blink
   end
 
+  def fail?
+    @fails = rand(100) < (@fail_rate.nil? ? 0 : @fail_rate)
+  end
+
+  def failed?
+    @fails
+  end
+
+  def worked?
+    not @fails
+  end
+
   private
 
   def display_text(msg)
     text          = msg.slice(9..-3)
     text.slice!(29..-1)
+
+    return if fail?
 
     @scroll_text  = nil
     @scroll_index = 0

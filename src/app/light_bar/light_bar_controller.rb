@@ -3,6 +3,8 @@ class LightBarController < ApplicationController
   set_view 'LightBarView'
   set_close_action :exit
 
+  add_listener :type => :window, :components => [:java_window]
+
   def load(*args)
     max_width = 195 + 2 + 320 + APP_SCROLLBAR_WIDTH # sizes of 1 OC Module and
     max_height = 80 + 2 + 80 + APP_SCROLLBAR_HEIGHT  # 1 D4 Module + 20 for scroll bars
@@ -121,9 +123,21 @@ class LightBarController < ApplicationController
   end
 
   def exit_menu_item_action_performed
+    window_closing
+    window_closed
+  end
+
+  def window_closing
     EM::stop_event_loop
+  end
+
+  def window_closed
     Java::JavaLang::System.exit(0)
   end
+
+#  alias java_window_closing exit_menu_item_action_performed
+
+#  alias frame_window_closing exit_menu_item_action_performed
 
   def connect_menu_item_action_performed
     model.app.try_connecting
