@@ -111,22 +111,22 @@ configuration: !ruby/object:IptiConfiguration
           - &id014 !ruby/object:D4ModuleModel 
             address: "05"
             controller_klass: D4ModuleController
-            fail_rate: 10
+            fail_rate: 20
             type_sym: :d4
           - &id013 !ruby/object:D4ModuleModel 
             address: "04"
             controller_klass: D4ModuleController
-            fail_rate: 20
+            fail_rate: 30
             type_sym: :d4
           - &id012 !ruby/object:D4ModuleModel 
             address: "03"
             controller_klass: D4ModuleController
-            fail_rate: 30
+            fail_rate: 35
             type_sym: :d4
           - &id011 !ruby/object:OcModuleModel 
             address: "01"
             controller_klass: OcModuleController
-            fail_rate: 50
+            fail_rate: 40
             main_oc: true
             type_sym: :oc
           - &id010 !ruby/object:D4ModuleModel 
@@ -136,7 +136,7 @@ configuration: !ruby/object:IptiConfiguration
             type_sym: :d4
           - &id009 !ruby/object:D4ModuleModel 
             address: "01"
-            fail_rate: 50
+            fail_rate: 40
             controller_klass: D4ModuleController
             type_sym: :d4
         light_groupings: 
