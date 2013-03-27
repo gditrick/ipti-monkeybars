@@ -140,8 +140,10 @@ module IPTI
       def get_oc_modules_84(message)
         oc_msg = IPTI::PickMaxMessage.new(self, self.message_types[:set_num_of_oc])
         oc_msg.fields[:main_oc_address] = @main_oc.nil? ? "00" : @main_oc.address
-        oc_msg.fields[:num_of_oc]       = @oc_list.size
-        oc_msg.fields[:is_at_10_15]     = false
+        if @bay_model.rev >= 10.15
+          oc_msg.fields[:num_of_oc]     = @oc_list.size
+          oc_msg.fields[:suppress_30]   = false
+        end
         oc_msg.fields[:ack]             = true
         oc_msg.sequence = message.sequence
         oc_msg
@@ -149,10 +151,10 @@ module IPTI
 
       def format_oc_modules_84(args={})
         return "'" if args.empty?
-        '%-2.2d%-2.2d%s' % [args[:main_oc_address],
-                              args[:num_of_oc],
-                              format_true_false(args[:is_at_10_15])
-        ]
+        @bay_model.rev >= 10.15 ? '%-2.2d%-2.2d%s' % [args[:main_oc_address],
+                                                      args[:num_of_oc],
+                                                      format_true_false(args[:suppress_30])] :
+                                  '%-2.2d' % [args[:main_oc_address]]
       end
 
       def get_modules(message)

@@ -11,12 +11,14 @@ class BayModuleModel < AbstractModel
                 :main_oc,
                 :number_of_4d,
                 :number_of_lp,
+                :rev,
                 :type_sym,
                 :width
 
   def initialize(addr="01")
     @address          = addr
     @controller_klass = 'BayModuleController'
+    @rev = 10.14
   end
 
   def to_yaml_properties
@@ -29,6 +31,7 @@ class BayModuleModel < AbstractModel
      "@main_oc",
      "@number_of_4d",
      "@number_of_lp",
+     "@rev",
      "@type_sym",
     ]
   end
@@ -43,5 +46,6 @@ class BayModuleModel < AbstractModel
       @main_oc == other.main_oc and
       @number_of_4d == other.number_of_4d and
       @number_of_lp == other.number_of_lp
+      @rev == other.rev
   end
 end

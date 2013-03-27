@@ -126,6 +126,7 @@ configuration: !ruby/object:IptiConfiguration
         main_oc: *id012
         number_of_4d: 16
         number_of_lp: 0
+        rev: 10.14
         type_sym: :bay
       - !ruby/object:BayModuleModel
         address: "02"
@@ -250,6 +251,7 @@ configuration: !ruby/object:IptiConfiguration
         main_oc: *id112
         number_of_4d: 16
         number_of_lp: 0
+        rev: 10.14
         type_sym: :bay
       - !ruby/object:BayModuleModel
         address: "03"
@@ -374,6 +376,7 @@ configuration: !ruby/object:IptiConfiguration
         main_oc: *id212
         number_of_4d: 16
         number_of_lp: 0
+        rev: 10.14
         type_sym: :bay
       - !ruby/object:BayModuleModel
         address: "04"
@@ -498,6 +501,7 @@ configuration: !ruby/object:IptiConfiguration
         main_oc: *id312
         number_of_4d: 16
         number_of_lp: 0
+        rev: 10.14
         type_sym: :bay
-    remote_host_ip: 192.168.1.31
+    remote_host_ip: 192.168.110.31
     remote_host_port: 2000
