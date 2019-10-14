@@ -14,7 +14,7 @@ GEM
     rawr (1.6.4)
       rubyzip
       user-choices
-    rubyzip (0.9.9)
+    rubyzip (2.0.0)
     s4t-utils (1.0.4)
       hoe (>= 1.3.0)
     state_machine (1.1.2)
